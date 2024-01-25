@@ -8,7 +8,11 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] CharacterController CharController;
    
+<<<<<<< Updated upstream
     public float jumpPar = 5 ;
+=======
+   string dror;
+>>>>>>> Stashed changes
     public float speed = 4;
     public Vector3 jumpHeight;
 
