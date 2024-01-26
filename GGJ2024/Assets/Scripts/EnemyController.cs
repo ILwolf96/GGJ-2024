@@ -7,9 +7,8 @@ using UnityEngine;
 public class EnemyController : ComboAttacker
 {
     public Transform playerTransform;
-    public int currentHp = 80;
+    public float currentHp = 80;
     public float movementSpeed = 0.001f;
-    public int Damage = 7; // do you mean damage?
     public int Defence = 3; // what is this going to be used for?
     public bool enemyIsDead = false;
     public float rotationSpeed = 5f;
@@ -25,21 +24,9 @@ public class EnemyController : ComboAttacker
     // Update is called once per frame
     protected override void Update()
     {
-        distance = Vector3.Distance(playerTransform.transform.position, this.transform.position);
+        distance = Vector3.Distance(playerTransform.transform.position, transform.position);
         
         base.Update();
-
-        if (currentHp <= 0)
-        {
-            /*animator.ResetTrigger("Walk1");
-            FallAnimation();*/
-            //player.UpdateScore(player.scoreCount);
-        }
-        if (distance > 0.1f)
-        {
-
-
-        }
         if (distance > 2)
         {
             //animator.SetTrigger("Walk1");
@@ -55,11 +42,6 @@ public class EnemyController : ComboAttacker
                 newPosition.y = playerTransform.position.y;
                 transform.position = newPosition;
             }
-        }
-        if (enemyIsDead)
-        {
-            Destroy(gameObject);
-            Spawner.enemyCount--;
         }
     }
     public void SetPlayerTransform(Transform player)
@@ -77,11 +59,11 @@ public class EnemyController : ComboAttacker
             switch (_comboCounter)
             {
                 case 1:
-                    _weapon.Attack(Damage, 0);
+                    _weapon.Attack(_damage, 0);
                     Debug.Log("First hit");
                     break;
                 case 2:
-                    _weapon.Attack(Damage * comboMultiplier, 0);
+                    _weapon.Attack(_damage * comboMultiplier, 0);
                     Debug.Log("Second hit");
                     break;
                 default:
@@ -92,9 +74,39 @@ public class EnemyController : ComboAttacker
     }
     public void TakeDamage(float damage, float knockback)
     {
-        // if an enemy has been attacked by a character should invoke TakeDamage in the enemyscript script (called by PlayerController script Attack())
+        currentHp -= damage;
+        if (currentHp <= 0)
+        {
+            Die();
+        }
+        else if (knockback != 0)
+        {
+            Knockback();
+        }
     }
+    public void Knockback() //need to check if it needs to change 
+    {
+        Vector3 newPosition = transform.position;
+        //float knockDir = -(playerTransform.position.x - newPosition.x) / (Mathf.Abs(playerTransform.position.x - newPosition.x));
+        if (newPosition.x < playerTransform.position.x)
+        {
+            newPosition.x = transform.position.x - 1f;
+            transform.position = newPosition;
+        }
+        else if (newPosition.x > playerTransform.position.x)
+        {
+            newPosition.x = transform.position.x + 1f;
+            transform.position = newPosition;
+        }
 
+    }
+    public void Die()
+    {
+        /*animator.ResetTrigger("Walk1");
+        FallAnimation();*/
+        Destroy(gameObject);
+        Spawner.enemyCount--;
+    }
 
 
 

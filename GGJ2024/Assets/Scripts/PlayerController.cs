@@ -4,11 +4,12 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-[RequireComponent (typeof(CapsuleCollider))]
+[RequireComponent (typeof(BoxCollider2D))]
 public class PlayerController : ComboAttacker
 {
-    [SerializeField] Rigidbody2D playerRb;
+    [SerializeField] Transform _playerTrans;
 
+    private const float _floorThreshold = -0.52785f;
     public float speed = 4;
     public Vector3 jumpHeight = new Vector3(0, 2.5f, 0);
     public float invunrabiltyInterval;
@@ -41,28 +42,26 @@ public class PlayerController : ComboAttacker
             {
                 originalPosition = Jump();
             }
-                if (_isJumping)
-                {
-                //charController.Move(jumpHeight * Time.deltaTime);
-                
+            if (_isJumping)
+            {
+                transform.Translate(jumpHeight * Time.deltaTime);
+
                 if (transform.position.y >= originalPosition.y + jumpHeight.y)
-                    { _isJumping = false; _isFalling = true;}
+                { _isJumping = false; _isFalling = true; }
 
-                }
-                if (_isFalling)
-                {
-                move = gravity; Debug.Log("im falling inlove tonighttt");
-                //charController.Move(move * Time.deltaTime);
-                
-                    if (transform.position.y <= originalPosition.y)
-                    { _isFalling = false; }
-                }
-               
+            }
+            if (_isFalling)
+            {
+                move = gravity; Debug.Log("im falling in love tonighttt");
+                transform.Translate(move * Time.deltaTime);
 
+                if (transform.position.y <= originalPosition.y)
+                { _isFalling = false; }
+            }
         }
         else if (_isJumping)
         {
-            //CharController.Move(gravity * Time.deltaTime);
+            transform.Translate(gravity * Time.deltaTime);
 
             if (jumpPos.y == originalPosition.y)
             {
@@ -73,25 +72,43 @@ public class PlayerController : ComboAttacker
         // Comabt calculations
         base.Update();
 
-        { // Invulnerability timing
-            if (_isInvunrable)
-            {
-                _invurnebltyT.Tick();
+        // Invulnerability timing
+        if (_isInvunrable)
+        {
+            _invurnebltyT.Tick();
 
-                if (_invurnebltyT.IsOver())
-                {
-                    _invurnebltyT.Reset();
-                    _isInvunrable = false;
-                }
+            if (_invurnebltyT.IsOver())
+            {
+                _invurnebltyT.Reset();
+                _isInvunrable = false;
             }
         }
     }
     public void Move()
     {
-        // Player movement
-        move = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
-        //charController.Move(move * Time.deltaTime * speed);
-        move = Vector3.zero;
+        if (!_isJumping && !_isFalling)
+        {
+            if (_playerTrans.position.y <= _floorThreshold)
+            {
+                float value = _playerTrans.position.y + 0.001f;
+                if (!(value > _floorThreshold))
+                {
+                    move = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+                    transform.Translate(move * speed * Time.deltaTime);
+                }
+            }
+            else
+            {
+                _playerTrans.position = new Vector3(_playerTrans.position.x, _floorThreshold, 0);
+            }
+                
+        }
+        else
+        {
+            move = new Vector3(Input.GetAxis("Horizontal"), 0, 0);
+            transform.Translate(move * speed * Time.deltaTime);
+        }
+        
     }
     public Vector3 Jump()
     {
