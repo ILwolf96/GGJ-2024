@@ -877,7 +877,7 @@ MonoBehaviour:
   enemy: {fileID: 450033634576709653, guid: 33280ec08c368fd40919fcf4bcbde9ad, type: 3}
   enemyController: {fileID: 2600864700924755880, guid: 33280ec08c368fd40919fcf4bcbde9ad, type: 3}
   playerTransform: {fileID: 1515109151}
-  spawnTime: 570.5
+  spawnTime: 5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

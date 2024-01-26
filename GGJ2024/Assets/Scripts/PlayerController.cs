@@ -132,21 +132,6 @@ public class PlayerController : ComboAttacker
 
         }
     }
-    public void IncreaseCombo()
-    {
-        {
-            // increases the combo depending on if combo didn't reset and and the player hit a target 
-            Debug.Log("Combo Increased" + _comboCounter);
-            _isInCombo = true;
-            _comboCounter++;
-            if (_comboCounter > 2)
-            {
-                Debug.Log("at increase");
-                ComboEnd();
-            }
-        }
-
-    }
     void BoostPlayerDamage()
     {
         //player.damage++
