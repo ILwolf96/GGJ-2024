@@ -4,22 +4,6 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-<<<<<<< Updated upstream
-    [SerializeField] private Transform playerPos;
-    public int currentHp = 80;
-    public float movementSpeed = 0.001f;
-    public int Attack = 7;
-    public int Defence = 3;
-    public bool enemyIsDead = false;
-    public float rotationSpeed = 0.3f;
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-=======
     public Transform playerTransform;
     public int currentHp = 80;
     public float movementSpeed = 0.001f;
@@ -27,7 +11,7 @@ public class EnemyController : MonoBehaviour
     public int Defence = 3; // what is this going to be used for?
     public bool enemyIsDead = false; 
     public float rotationSpeed = 5f;
->>>>>>> Stashed changes
+
 
     // Update is called once per frame
     void Update()
