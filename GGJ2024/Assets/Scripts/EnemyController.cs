@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
@@ -9,7 +10,7 @@ public class EnemyController : MonoBehaviour
     public float movementSpeed = 0.001f;
     public int Attack = 7; // do you mean damage?
     public int Defence = 3; // what is this going to be used for?
-    public bool enemyIsDead = false; 
+    public bool enemyIsDead = false;
     public float rotationSpeed = 5f;
 
 
@@ -28,20 +29,20 @@ public class EnemyController : MonoBehaviour
             FallAnimation();*/
             //player.UpdateScore(player.scoreCount);
         }
-        if (distance > 0.1f )
+        if (distance > 0.1f)
         {
-            
-            
+
+
         }
         if (distance > 2)
         {
             //animator.SetTrigger("Walk1");
             Vector3 direction = playerTransform.position - transform.position;
-                       
+
             transform.Translate(direction * movementSpeed * Time.deltaTime);
-                       
+
             float yDistance = Mathf.Abs(playerTransform.position.y - transform.position.y);
-                        
+
             if (yDistance < 0.5)
             {
                 Vector3 newPosition = transform.position;
@@ -49,7 +50,7 @@ public class EnemyController : MonoBehaviour
                 transform.position = newPosition;
             }
         }
-        if(enemyIsDead)
+        if (enemyIsDead)
         {
             Destroy(gameObject);
             Spawner.enemyCount--;
