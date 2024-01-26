@@ -216,4 +216,16 @@ public class PlayerController : MonoBehaviour
         _comboCounter = 0;
         _isInCombo = false;
     }
+    void BoostPlayerDamage()
+    {
+        //player.damage++
+    }
+    void BoostPlayerSpeed()
+    {
+        //player.Speed++
+    }
+    void BoostPlayerCrit()
+    {
+        //player.crit++
+    }
 }
