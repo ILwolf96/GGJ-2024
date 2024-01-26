@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 groundPos;
     private Vector3 jumpPos;
 
+
     private Vector3 originalPosition;
 
     void Update()
@@ -36,12 +37,15 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKey(KeyCode.Space))
             {
                 Jump();
+                while (_isJumping == true)
+                { CharController.Move(jumpHeight); _isJumping = false; }
+
             }
             
         }
         else if (_isJumping)
         {
-            CharController.Move(gravity * Time.deltaTime);
+            //CharController.Move(gravity * Time.deltaTime);
 
             if (jumpPos.y == originalPosition.y)
             {
@@ -62,13 +66,13 @@ public class PlayerController : MonoBehaviour
 
     public void Jump()
     {
+        _isJumping = true;
         // Moves the player upwards and allows a jump attack while still in the air
-        originalPosition = this.transform.position;
-        CharController.Move(jumpHeight);
-        
+        //originalPosition = this.transform.position;
+        //CharController.Move(jumpHeight);
         if (this.transform.position.y >= (originalPosition.y + jumpHeight.y))
         {
-            _isJumping = true;
+            
             _isGrounded = false;
             jumpPos = this.transform.position;
         }

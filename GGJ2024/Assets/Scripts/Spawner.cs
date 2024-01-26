@@ -5,20 +5,23 @@ using UnityEngine;
 public class Spawner : MonoBehaviour
 {
     [SerializeField] GameObject enemy;
-    [SerializeField] float spawnTime = 10.5f;
-    [SerializeField] float distance = 5f;
+   
+    public float spawnTime = 10.5f;
+    public float distance = 5f;
+    public int maxEnemyAmount;
+    public List<GameObject> enemeylist = new List<GameObject>(); // need to change to private
 
-    public int MaxEnemyAmount;
-    private bool spawnOnLeftSide = true;
-    List<GameObject> enemeylist = new List<GameObject>();
+    private bool _spawnOnLeftSide = true;
+   
 
-    void Start()
+    void Update()
     {
         StartCoroutine(Spawn());
     }
+
     IEnumerator Spawn()
     {
-        while (enemeylist.Count < MaxEnemyAmount)
+        while (enemeylist.Count < maxEnemyAmount)
         {
             Vector3 randomPos;
             
@@ -27,7 +30,7 @@ public class Spawner : MonoBehaviour
             Vector3 vector3Rot = randomRotLeft.eulerAngles;
             GameObject enemyInstance;
 
-            if (spawnOnLeftSide)
+            if (_spawnOnLeftSide)
             {
                 randomPos = new Vector3(transform.position.x - 10.6f, transform.position.y - 3f, transform.position.z);
                 enemyInstance = Instantiate(enemy, randomPos, randomRotLeft);
@@ -40,9 +43,10 @@ public class Spawner : MonoBehaviour
                 enemyInstance = Instantiate(enemy, randomPos, randomRotRight);
                 enemeylist.Add(enemyInstance);
             }
-            spawnOnLeftSide = !spawnOnLeftSide;
+            _spawnOnLeftSide = !_spawnOnLeftSide;
             yield return new WaitUntil(() => Vector3.Distance(transform.position, enemyInstance.transform.position) > distance);
-            //yield return new WaitForSeconds(spawnTime);
+            yield return new WaitForSeconds(spawnTime);
         }
     }
 }
+// notes - change the speed rate of spawns, and create a range where they can spawn on the Y so they don't all come from the same spot

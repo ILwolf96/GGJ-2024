@@ -8,19 +8,18 @@ public class EnemyController : MonoBehaviour
     public Transform playerPos;
     public int currentHp = 80;
     public float movementSpeed = 0.001f;
-    public int Attack = 7;
-    public int Defence = 3;
-    public bool enemyIsDead = false;
+    public int Attack = 7; // do you mean damage?
+    public int Defence = 3; // what is this going to be used for?
+    public bool enemyIsDead = false; 
     public float rotationSpeed = 0.3f;
-    GameObject Player;
-
-    void Start()
+    
+    private GameObject _player;
+    private void Awake()
     {
-        Player = GameObject.FindWithTag("Player");
-        playerPos = Player.transform;
+        _player = GameObject.FindWithTag("Player");
+        playerPos = _player.transform;
     }
 
-    // Update is called once per frame
     void Update()
     {
         float distance = Vector3.Distance(playerPos.transform.position, this.transform.position);
