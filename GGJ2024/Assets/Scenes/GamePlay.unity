@@ -535,11 +535,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7a3eb2eef0a13e4287fa244c05cca39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CharController: {fileID: 1515109149}
+  charController: {fileID: 1515109149}
   playerFist: {fileID: 792717876}
   speed: 4
   jumpHeight: {x: 0, y: 5, z: 0}
-  gravity: {x: 0, y: -10, z: 0}
   punchTime: 1
   attackInterval: 2
   comboMultiplier: 3
@@ -603,7 +602,7 @@ Transform:
   m_GameObject: {fileID: 1515109146}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.02, y: -2.34, z: -1.08}
+  m_LocalPosition: {x: 0.02, y: -1.58, z: -1.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
