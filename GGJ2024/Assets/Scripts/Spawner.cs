@@ -5,47 +5,47 @@ using UnityEngine;
 public class Spawner : MonoBehaviour
 {
     [SerializeField] GameObject enemy;
-   
+    [SerializeField] EnemyController enemyController;
+    [SerializeField] Transform playerTransform;
+
     public float spawnTime = 10.5f;
-    public float distance = 5f;
-    public int maxEnemyAmount;
-    public List<GameObject> enemeylist = new List<GameObject>(); // need to change to private
-
+    public static int maxEnemyAmount = 10;
+    public static int enemyCount = 0;
     private bool _spawnOnLeftSide = true;
-   
 
-    void Update()
+    void Start()
     {
         StartCoroutine(Spawn());
     }
 
     IEnumerator Spawn()
     {
-        while (enemeylist.Count < maxEnemyAmount)
+        while (enemyCount < maxEnemyAmount)
         {
             Vector3 randomPos;
-            
             Quaternion randomRotLeft = enemy.transform.rotation;
             Quaternion randomRotRight = enemy.transform.rotation;
-            Vector3 vector3Rot = randomRotLeft.eulerAngles;
-            GameObject enemyInstance;
 
             if (_spawnOnLeftSide)
             {
                 randomPos = new Vector3(transform.position.x - 10.6f, transform.position.y - 3f, transform.position.z);
-                enemyInstance = Instantiate(enemy, randomPos, randomRotLeft);
-                enemeylist.Add(enemyInstance);
+                Instantiate(enemy, randomPos, randomRotLeft);
 
             }
-            else
+            else if (!_spawnOnLeftSide)
             {
                 randomPos = new Vector3(transform.position.x + 10.6f, transform.position.y, transform.position.z);
-                enemyInstance = Instantiate(enemy, randomPos, randomRotRight);
-                enemeylist.Add(enemyInstance);
+
+                Instantiate(enemy, randomPos, randomRotRight);
             }
+            if (enemyController != null && playerTransform != null)
+            {
+                enemyController.SetPlayerTransform(playerTransform);
+            }
+            enemyCount++;
             _spawnOnLeftSide = !_spawnOnLeftSide;
-            yield return new WaitUntil(() => Vector3.Distance(transform.position, enemyInstance.transform.position) > distance);
             yield return new WaitForSeconds(spawnTime);
+
         }
     }
 }
