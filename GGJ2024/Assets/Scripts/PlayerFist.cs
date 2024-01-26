@@ -11,7 +11,7 @@ public class PlayerFist : Weapon
             Debug.Log("Enmey got hit");
             Attacker.IncreaseCombo();
             _successfulHit = true;
-            //collision.gameObject.GetComponent<EnemyContoller>().TakeDamage(_damage,_knockback);
+            collision.gameObject.GetComponent<EnemyController>().TakeDamage(_damage,_knockback);
         }
 
     }

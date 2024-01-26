@@ -59,7 +59,6 @@ public abstract class ComboAttacker : MonoBehaviour
                 if (_comboTimer.IsOver())
                 {
                     _comboTimer.Reset();
-                    Debug.Log("at timer");
                     ComboEnd();
                 }
             }
@@ -79,12 +78,11 @@ public abstract class ComboAttacker : MonoBehaviour
 
     public void IncreaseCombo()
     {
-        Debug.Log("Combo Increased" + _comboCounter);
+        Debug.Log("Combo Increased " + _comboCounter);
         _isInCombo = true;
         _comboCounter++;
         if (_comboCounter > _comboSize)
         {
-            Debug.Log("at increase");
             ComboEnd();
         }
     }

@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _weapon: {fileID: 1050675830017906343}
-  _damage: 0
+  _damage: 80
   _knockBack: 0
   attackDuration: 1
   betweenAttacksInterval: 2

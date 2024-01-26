@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using Unity.VisualScripting;
 using UnityEngine;
+using static PlayerController;
 
 public class EnemyController : ComboAttacker
 {
@@ -32,7 +33,19 @@ public class EnemyController : ComboAttacker
             //animator.SetTrigger("Walk1");
             Vector3 direction = playerTransform.position - transform.position;
 
-            transform.Translate(direction * movementSpeed * Time.deltaTime);
+
+            if (transform.position.y <= PlayerController.THRESHOLDS[(int)PlayerController.Directions.North])
+            {
+                if (!(transform.position.y + safeSpace > THRESHOLDS[(int)Directions.North]))
+                {
+                    transform.Translate(direction * movementSpeed * Time.deltaTime);
+                }
+            }
+            else
+            {
+                transform.position = new Vector3(transform.position.x, THRESHOLDS[(int)Directions.North], transform.position.z);
+            }
+
 
             float yDistance = Mathf.Abs(playerTransform.position.y - transform.position.y);
 
@@ -60,11 +73,11 @@ public class EnemyController : ComboAttacker
             {
                 case 1:
                     _weapon.Attack(_damage, 0);
-                    Debug.Log("First hit");
+                    //Debug.Log("First hit");
                     break;
                 case 2:
                     _weapon.Attack(_damage * comboMultiplier, 0);
-                    Debug.Log("Second hit");
+                    //Debug.Log("Second hit");
                     break;
                 default:
                     Debug.Log("I fucked up");
@@ -75,8 +88,10 @@ public class EnemyController : ComboAttacker
     public void TakeDamage(float damage, float knockback)
     {
         currentHp -= damage;
+        Debug.Log("Hp was lost");
         if (currentHp <= 0)
         {
+            Debug.Log("I AM DEAD");
             Die();
         }
         else if (knockback != 0)
