@@ -73,12 +73,6 @@ crashlytics-build.properties
 /GGJ2024/Library
 /GGJ2024/Logs
 /GGJ2024/UserSettings
-GGJ2024/Temp/workerlic
-GGJ2024/Temp/UnityLockfile
-GGJ2024/Temp/FSTimeGet-154aeaab2c23f1c4fbbb862a6168d089
-GGJ2024/Temp/__Backupscenes/0.backup
-GGJ2024/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
-GGJ2024/obj/Debug/Assembly-CSharp.csproj.AssemblyReference.cache
-GGJ2024/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+/GGJ2024/Temp
 GGJ2024/obj/Debug/Assembly-CSharp.csproj.AssemblyReference.cache
 GGJ2024/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
