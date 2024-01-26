@@ -13,9 +13,13 @@ public class EnemyScript : MonoBehaviour
     
     private float _stunDurE;
 
-    private float _knockBack;
+    private float _knockback;
 
     private float _rewardChance;
+
+
+
+
 
     void Update()
     {

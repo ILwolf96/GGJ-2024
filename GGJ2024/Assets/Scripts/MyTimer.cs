@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Timer
+public class MyTimer
 {
 
     private float _timer = 0;
     private float _duration;
 
-    public Timer(float duration)
+    public MyTimer(float duration)
     {
         _duration = duration;
     }

@@ -5,8 +5,9 @@ public class PlayerFist : MonoBehaviour
 {
     [SerializeField] PlayerController Player;
     [SerializeField] BoxCollider2D BoxCollider2D;
-    Timer _punchTimer;
+    MyTimer _punchTimer;
     float _damage;
+    float _knockback;
     bool _enemyHit = false;
     bool _isPunching = false;
     
@@ -17,14 +18,14 @@ public class PlayerFist : MonoBehaviour
         BoxCollider2D.enabled = true;
     }
 
-    // Start is called before the first frame update
+   
     void Start()
     {
         BoxCollider2D.enabled = false;
-        _punchTimer =new Timer(Player.punchTime);
+        _punchTimer =new MyTimer(Player.punchTime);
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
         if(_isPunching)
@@ -36,6 +37,7 @@ public class PlayerFist : MonoBehaviour
         {
             if (!_enemyHit)
             {
+                Debug.Log("Here?");
                 Player.ComboEnd();
             }
             _enemyHit = false;
@@ -54,7 +56,7 @@ public class PlayerFist : MonoBehaviour
             Debug.Log("Enmey got hit");
             Player.IncreaseCombo();
             _enemyHit = true;
-            //collision.gameObject.GetComponent<EnemyScript>().TakeDamage(_damage,knockback);
+            //collision.gameObject.GetComponent<EnemyScript>().TakeDamage(_damage,_knockback);
         }
 
     }

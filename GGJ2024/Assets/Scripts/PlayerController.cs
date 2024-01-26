@@ -12,9 +12,12 @@ public class PlayerController : MonoBehaviour
     public float jumpHeight;
     public float punchTime;
     public float attackInterval;
+
     [SerializeField] float _comboMultiplier;
     [SerializeField] float _comboWindow;
+    [SerializeField] float _invulnerabilityInterval;
 
+    private KeyCode _attackKey = KeyCode.E;
     private float _laughMeter; // laughMeter
     private float _damage;
     private float _knockback;
@@ -26,14 +29,17 @@ public class PlayerController : MonoBehaviour
     private bool _isGrounded;
     
     private bool _canAttack = true;
+    private bool _isInvulnerable = false;
 
-    private Timer _attackTimer;
-    private Timer _comboTimer;
+    private MyTimer _attackTimer;
+    private MyTimer _comboTimer;
+    private MyTimer _invulnerabilityTimer;
 
     void Start()
     {
-        _attackTimer = new Timer(attackInterval);
-        _comboTimer = new Timer(_comboWindow);
+        _attackTimer = new MyTimer(attackInterval);
+        _comboTimer = new MyTimer(_comboWindow);
+        _invulnerabilityTimer = new MyTimer(_invulnerabilityInterval);
     }
 
     void Update()
@@ -55,7 +61,7 @@ public class PlayerController : MonoBehaviour
             if (_canAttack)
             {
                 // Checking for attack input
-                if (Input.GetKeyDown(KeyCode.E))
+                if (Input.GetKeyDown(_attackKey))
                 {
                     if (_isInCombo)
                     {
@@ -82,10 +88,21 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+
+        { // Invulnerability timing
+            if (_isInvulnerable)
+            {
+                _invulnerabilityTimer.Tick();
+                
+                if (_invulnerabilityTimer.IsOver())
+                {
+                    _invulnerabilityTimer.Reset();
+                    _isInvulnerable = false;
+                }
+            }
+        }
         
     }
-
-
 
    public void Jump()
     {
@@ -120,12 +137,16 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage()
     {
         // if a character has been attacked by an enemy should invoke TakeDamage in the player script (called by enemey script Attack())
+        if (!_isInvulnerable)
+        {
+            //The rest of the code
+            _isInvulnerable = true;
+        }
     }
 
     public void IncreaseCombo()
     {
         // increases the combo depending on if combo didn't reset and and the player hit a target 
-        Debug.Log("Combo Increased");
         _isInCombo = true;
         _comboCounter++;
         if (_comboCounter > 2)

@@ -427,7 +427,8 @@ MonoBehaviour:
   punchTime: 1
   attackInterval: 2
   _comboMultiplier: 1.5
-  _comboWindow: 10
+  _comboWindow: 50
+  _invulnerabilityInterval: 0
 --- !u!136 &1515109148
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -624,7 +625,7 @@ Transform:
   m_GameObject: {fileID: 1777910546}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.01329882, z: -0, w: 0.99991155}
-  m_LocalPosition: {x: 1.518, y: 0.354, z: -0.061}
+  m_LocalPosition: {x: 1.56, y: 0.32, z: -0.06}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
