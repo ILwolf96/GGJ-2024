@@ -4,37 +4,29 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(CharacterController))]
-[RequireComponent (typeof(CapsuleCollider))]
-public class PlayerController : MonoBehaviour
+//[RequireComponent(typeof(CharacterController))]
+[RequireComponent (typeof(CapsuleCollider2D))]
+public class PlayerController : ComboAttacker
 {
-    [SerializeField] CharacterController CharController;
-    [SerializeField] PlayerFist playerFist;
+    //[SerializeField] CharacterController CharController;
+    
 
     public float speed = 4;
     public Vector3 jumpHeight = new Vector3(0, 2.5f, 0);
     public Vector3 gravity = new Vector3(0, -2.5f, 0);
-  
-    // attack varible
-    public float punchTime;
-    public float attackInterval;
-    public float comboMultiplier;
-    public float comboWindow;
-    public float invunrabiltyInterval;
-    private float _comboCounter = 0;
-    private KeyCode _attackKey = KeyCode.E;
-    private bool _isInCombo = false;
-    private bool _canAttack = true;
-    private bool _isInvunrable = false;
 
-    private MyTimer _comboT;
-    private MyTimer _attackT;
+    
+    public float invunrabiltyInterval;
+    
+    private KeyCode _attackKey = KeyCode.E;
+    
+    private bool _isInvunrable = false;
+   
+    
     private MyTimer _invurnebltyT;
 
     private float _laughMeter; // laughMeter
-    private float _damage;
-    private float _knockBack;
-
+   
     private float _stunDur;
     private bool _isGrounded = true;
     private bool _isJumping = false;
@@ -45,13 +37,14 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 originalPosition;
 
-    private void Start()
+    protected override void Start()
     {
-        _comboT = new MyTimer(comboWindow);
-        _attackT = new MyTimer(attackInterval);
+        base.Start();
+        _comboSize = 3;
         _invurnebltyT = new MyTimer(invunrabiltyInterval);
     }
-    void Update()
+
+    protected override void Update()
     {
         if (_isGrounded)
         {
@@ -60,8 +53,8 @@ public class PlayerController : MonoBehaviour
             {
                 Jump();
                 while (_isJumping == true)
-                { CharController.Move(jumpHeight); _isJumping = false; }
-
+                { //CharController.Move(jumpHeight); _isJumping = false; 
+                }
             }
             
         }
@@ -75,45 +68,9 @@ public class PlayerController : MonoBehaviour
                 _isJumping = false;
             }
         }
-        { // Attack interval timing
 
-            //Waiting for the attack interval to end
-            if (_attackT.IsOver())
-            {
-                _attackT.Reset();
-                _canAttack = true;
-            }
-            if (_canAttack)
-            {
-                // Checking for attack input
-                if (Input.GetKeyDown(_attackKey))
-                {
-                    if (_isInCombo)
-                    {
-                        _attackT.Reset();
-                    }
-                    Attack();
-                }
-            }
-            else
-            {
-                _attackT.Tick();
-            }
-        }
-
-        { // Combo timing
-            if (_isInCombo && _canAttack)
-            {
-                _comboT.Tick();
-                //Missed the window to chain combo
-                if (_comboT.IsOver())
-                {
-                    _comboT.Reset();
-                    Debug.Log("at timer");
-                    ComboEnd();
-                }
-            }
-        }
+        // Comabt calculations
+        base.Update();
 
         { // Invulnerability timing
             if (_isInvunrable)
@@ -129,11 +86,12 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+
     public void Move()
     {
         // Player movement
         move = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
-        CharController.Move(move * Time.deltaTime * speed);
+        //CharController.Move(move * Time.deltaTime * speed);
         move = Vector3.zero;
     }
 
@@ -149,64 +107,42 @@ public class PlayerController : MonoBehaviour
             _isGrounded = false;
             jumpPos = this.transform.position;
         }
-        
-
-
-
+       
     }
 
-    public void Attack() 
+    protected override void Attack()
     {
-        _canAttack = false;
-        switch (_comboCounter)
+        if (Input.GetKeyDown(_attackKey))
         {
-            case 0:
-                playerFist.Attack(_damage, 0);
-                Debug.Log("First hit");
-                break;
-            case 1:
-                playerFist.Attack(_damage * comboMultiplier, 0);
-                Debug.Log("Second hit");
-                break;
-            case 2:
-                playerFist.Attack(_damage * comboMultiplier * comboMultiplier, _knockBack);
-                Debug.Log("Third hit");
-                break;
-            default:
-                Debug.Log("I fucked up");
-                break;
+            base.Attack();
+            switch (_comboCounter)
+            {
+                case 1:
+                    _weapon.Attack(_damage, 0);
+                    Debug.Log("First hit");
+                    break;
+                case 2:
+                    _weapon.Attack(_damage * comboMultiplier, 0);
+                    Debug.Log("Second hit");
+                    break;
+                case 3:
+                    _weapon.Attack(_damage * comboMultiplier * comboMultiplier, _knockBack);
+                    Debug.Log("Third hit");
+                    break;
+                default:
+                    Debug.Log("I fucked up");
+                    break;
+            }
         }
     }
+   
 
     public void TakeDamage()
     {
         if (!_isInvunrable)
         {
-            //The rest of the code
-            _isInvunrable = true;
+            //Things that happen when not invulnerable
+            
         }
-    }
-
-    public void IncreaseCombo()
-    {
-        {
-            // increases the combo depending on if combo didn't reset and and the player hit a target 
-            Debug.Log("Combo Increased" + _comboCounter);
-            _isInCombo = true;
-            _comboCounter++;
-            if (_comboCounter > 2)
-            {
-                Debug.Log("at increase");
-                ComboEnd();
-            }
-        }
-
-    }
-
-    public void ComboEnd()
-    {
-        Debug.Log("Combo Over");
-        _comboCounter = 0;
-        _isInCombo = false;
     }
 }
