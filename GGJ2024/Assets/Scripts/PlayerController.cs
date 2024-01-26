@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] CharacterController CharController;
+
    
     public float speed = 4;
     public Vector3 jumpHeight = new Vector3(0, 2.5f, 0);

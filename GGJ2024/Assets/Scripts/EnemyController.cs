@@ -1,22 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    [SerializeField] private Transform playerPos;
+    public Transform playerPos;
     public int currentHp = 80;
     public float movementSpeed = 0.001f;
     public int Attack = 7;
     public int Defence = 3;
     public bool enemyIsDead = false;
     public float rotationSpeed = 0.3f;
+    GameObject Player;
 
-
-    // Start is called before the first frame update
     void Start()
     {
-        
+        Player = GameObject.FindWithTag("Player");
+        playerPos = Player.transform;
     }
 
     // Update is called once per frame
