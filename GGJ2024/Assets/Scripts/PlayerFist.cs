@@ -1,62 +1,17 @@
 using UnityEngine;
 
-[RequireComponent(typeof(BoxCollider2D))]
-[RequireComponent(typeof(Rigidbody2D))]
-public class PlayerFist : MonoBehaviour
+
+public class PlayerFist : Weapon
 {
-    [SerializeField] PlayerController Player;
-    [SerializeField] BoxCollider2D BoxCollider2D;
-    MyTimer _punchTimer;
-    float _damage;
-    float _knockback;
-    bool _enemyHit = false;
-    bool _isPunching = false;
-    
-    public void Attack(float damage,float knockback)
+    protected override void OnTriggerEnter2D(Collider2D collision)
     {
-        _isPunching = true;
-        _damage = damage;
-        BoxCollider2D.enabled = true;
-    }
-
-   
-    void Start()
-    {
-        BoxCollider2D.enabled = false;
-        _punchTimer =new MyTimer(Player.punchTime);
-    }
-
-    
-    void Update()
-    {
-        if(_isPunching)
-        {
-            _punchTimer.Tick();
-        }
-        
-        if (_punchTimer.IsOver())
-        {
-            if (!_enemyHit)
-            {
-                Player.ComboEnd();
-            }
-            _enemyHit = false;
-            _isPunching = false;
-            _punchTimer.Reset();
-            BoxCollider2D.enabled = false;
-        }
-        
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "enemy")
+        if (collision.gameObject.tag == "Enemy")
         {
             
             Debug.Log("Enmey got hit");
-            Player.IncreaseCombo();
-            _enemyHit = true;
-            //collision.gameObject.GetComponent<EnemyScript>().TakeDamage(_damage,_knockback);
+            Attacker.IncreaseCombo();
+            _successfulHit = true;
+            collision.gameObject.GetComponent<EnemyController>().TakeDamage(_damage,_knockback);
         }
 
     }

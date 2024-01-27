@@ -1,91 +1,143 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
-[RequireComponent(typeof(CharacterController))]
-[RequireComponent (typeof(CapsuleCollider))]
-public class PlayerController : MonoBehaviour
+
+[RequireComponent(typeof(BoxCollider2D))]
+public class PlayerController : ComboAttacker
 {
-    [SerializeField] CharacterController charController;
-    [SerializeField] PlayerFist playerFist;
 
+    public enum Directions
+    {
+        North, South, West, East
+    }
+    public static float[] THRESHOLDS = { -0.62f, -3.33f, -8.57f, 8.5f };
+    public static float safeSpace = 0.01f;
+
+    [SerializeField] Transform playerTransform;
+
+    public float pushDistance;
+    public float pushVelocity;
     public float speed = 4;
     public Vector3 jumpHeight = new Vector3(0, 2.5f, 0);
-
-  
-    // attack varible
-    public float punchTime;
-    public float attackInterval;
-    public float comboMultiplier;
-    public float comboWindow;
     public float invunrabiltyInterval;
-    private float _comboCounter = 0;
     private KeyCode _attackKey = KeyCode.E;
-    private bool _isInCombo = false;
-    private bool _canAttack = true;
+    private bool _isPushed = false;
+    private float _pushDirection;
     private bool _isInvunrable = false;
-
-    private MyTimer _comboT;
-    private MyTimer _attackT;
     private MyTimer _invurnebltyT;
-
-    private float _laughMeter; // laughMeter
-    private float _damage;
-    private float _knockBack;
-
-    private bool _isFalling;
-
+    private float _laughMeter;
+    private bool _isFalling = false;
     private float _stunDur;
     private bool _isGrounded = true;
     private bool _isJumping = false;
+    
     private Vector3 move;
     private Vector3 groundPos;
     private Vector3 jumpPos;
-    private Vector3 gravity = new Vector3 (0,-2.5f,0);
-
-
+    private Vector3 gravity = new Vector3(0, -2.5f, 0);
     private Vector3 originalPosition;
 
-    private void Start()
+
+
+    public bool isAirborne()
     {
-        _comboT = new MyTimer(comboWindow);
-        _attackT = new MyTimer(attackInterval);
+        return _isJumping || _isFalling;
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+        _comboSize = 3;
         _invurnebltyT = new MyTimer(invunrabiltyInterval);
     }
-    void Update()
+    protected override void Update()
     {
-        if (_isGrounded)
+        if (_isPushed)
+        {
+            //Pushed left
+            if(_pushDirection < 0)
+            {
+                if (transform.position.x >= THRESHOLDS[(int)Directions.West])
+                {
+
+                    if (!(transform.position.x - safeSpace < THRESHOLDS[(int)Directions.West]))
+                    {
+                        Pushed();
+                    }
+                    else
+                    {
+                        _isPushed = false;
+                    }
+                    
+                }
+                else
+                {
+                    transform.position = new Vector3(THRESHOLDS[(int)Directions.West], transform.position.y, transform.position.z);
+                    _isPushed = false;
+
+                }
+
+            }
+            //Pushed left
+            else
+            {
+                if (transform.position.x <= THRESHOLDS[(int)Directions.East])
+                {
+
+                    if (!(transform.position.x + safeSpace > THRESHOLDS[(int)Directions.East]))
+                    {
+                        Pushed();
+                    }
+                    else
+                    {
+                        _isPushed = false;
+                    }
+                }
+                else
+                {
+                    transform.position = new Vector3(THRESHOLDS[(int)Directions.East], transform.position.y, transform.position.z);
+                    _isPushed = false;
+                }
+
+            }
+
+
+
+           
+        }
+        else if (_isGrounded)
         {
             Move();
+
             if (Input.GetKey(KeyCode.Space) && !_isFalling && !_isJumping)
             {
                 originalPosition = Jump();
+                Debug.Log("In Player");
             }
-                if (_isJumping)
-                {
-                charController.Move(jumpHeight * Time.deltaTime);
-                
+            if (_isJumping)
+            {
+                transform.Translate(jumpHeight * Time.deltaTime);
+
                 if (transform.position.y >= originalPosition.y + jumpHeight.y)
-                    { _isJumping = false; _isFalling = true;}
-
-                }
-                if (_isFalling)
-                {
-                move = gravity; Debug.Log("im falling inlove tonighttt");
-                charController.Move(move * Time.deltaTime);
-                
-                    if (transform.position.y <= originalPosition.y)
-                    { _isFalling = false; }
-                }
-               
+                { _isJumping = false; _isFalling = true; }
 
             }
-            
+            if (_isFalling)
+            {
+                move = gravity; Debug.Log("im falling in love tonighttt");
+                transform.Translate(move * Time.deltaTime);
+
+                if (transform.position.y <= originalPosition.y)
+                { _isFalling = false; }
+            }
+        }
         else if (_isJumping)
         {
-            //CharController.Move(gravity * Time.deltaTime);
+            transform.Translate(gravity * Time.deltaTime);
 
             if (jumpPos.y == originalPosition.y)
             {
@@ -93,127 +145,247 @@ public class PlayerController : MonoBehaviour
                 _isJumping = false;
             }
         }
-        { // Attack interval timing
+        // Comabt calculations
+        base.Update();
 
-            //Waiting for the attack interval to end
-            if (_attackT.IsOver())
+        // Invulnerability timing
+        if (_isInvunrable)
+        {
+            Debug.Log("INVIS");
+            _invurnebltyT.Tick();
+
+            if (_invurnebltyT.IsOver())
             {
-                _attackT.Reset();
-                _canAttack = true;
-            }
-            if (_canAttack)
-            {
-                // Checking for attack input
-                if (Input.GetKeyDown(_attackKey))
-                {
-                    if (_isInCombo)
-                    {
-                        _attackT.Reset();
-                    }
-                    Attack();
-                }
-            }
-            else
-            {
-                _attackT.Tick();
+                _invurnebltyT.Reset();
+                _isInvunrable = false;
             }
         }
-
-        { // Combo timing
-            if (_isInCombo && _canAttack)
-            {
-                _comboT.Tick();
-                //Missed the window to chain combo
-                if (_comboT.IsOver())
-                {
-                    _comboT.Reset();
-                    Debug.Log("at timer");
-                    ComboEnd();
-                }
-            }
-        }
-
-        { // Invulnerability timing
-            if (_isInvunrable)
-            {
-                _invurnebltyT.Tick();
-
-                if (_invurnebltyT.IsOver())
-                {
-                    _invurnebltyT.Reset();
-                    _isInvunrable = false;
-                }
-            }
-        }
-
     }
+
+    public void Pushed()
+    {
+        transform.Translate(new Vector3(_pushDirection, 0, 0) * pushVelocity * Time.deltaTime);
+        if (Math.Abs(originalPosition.x - transform.position.x) >= pushDistance)
+        {
+            Debug.Log("push is over");
+            _isPushed = false;
+        }
+    }
+
     public void Move()
     {
-        // Player movement
-        move = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
-        charController.Move(move * Time.deltaTime * speed);
-        move = Vector3.zero;
-    }
+        if (!_isJumping && !_isFalling)
+        {
+            //down left
+            if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.LeftArrow))
+            {
+                CheckMovement(KeyCode.DownArrow, 0.8f);
+                CheckMovement(KeyCode.LeftArrow, 0.8f);
+            }
+            //down right
+            else if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.RightArrow))
+            {
+                CheckMovement(KeyCode.DownArrow, 0.8f);
+                CheckMovement(KeyCode.RightArrow, 0.8f);
+            }
+            //up right
+            else if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.RightArrow))
+            {
+                CheckMovement(KeyCode.UpArrow, 0.8f);
+                CheckMovement(KeyCode.RightArrow, 0.8f);
+            }
+            //up left
+            else if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.LeftArrow))
+            {
+                CheckMovement(KeyCode.UpArrow, 0.8f);
+                CheckMovement(KeyCode.LeftArrow, 0.8f);
+            }
+            //Only up
+            else if (Input.GetKey(KeyCode.UpArrow))
+            {
+                CheckMovement(KeyCode.UpArrow, 1);
+            }
+            //Only down
+            else if (Input.GetKey(KeyCode.DownArrow))
+            {
+                CheckMovement(KeyCode.DownArrow, 1);
+            }
+            //Only left
+            else if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                CheckMovement(KeyCode.LeftArrow, 1);
+            }
+            //Only right
+            else if (Input.GetKey(KeyCode.RightArrow))
+            {
+                CheckMovement(KeyCode.RightArrow, 1);
+            }
 
+        }
+        else
+        {
+            // only left
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                CheckMovement(KeyCode.LeftArrow, 1);
+            }
+            // only right
+            else if (Input.GetKey(KeyCode.RightArrow))
+            {
+                CheckMovement(KeyCode.RightArrow, 1);
+            }
+            move = new Vector3(Input.GetAxis("Horizontal"), 0, 0);
+
+        }
+
+    }
     public Vector3 Jump()
     {
         originalPosition = transform.position;
         _isJumping = true;
         return originalPosition;
     }
-
-    public void Attack() 
+    protected override void Attack()
     {
-        _canAttack = false;
-        switch (_comboCounter)
+        if (Input.GetKeyDown(_attackKey))
         {
-            case 0:
-                playerFist.Attack(_damage, 0);
-                Debug.Log("First hit");
-                break;
-            case 1:
-                playerFist.Attack(_damage * comboMultiplier, 0);
-                Debug.Log("Second hit");
-                break;
-            case 2:
-                playerFist.Attack(_damage * comboMultiplier * comboMultiplier, _knockBack);
-                Debug.Log("Third hit");
-                break;
-            default:
-                Debug.Log("I fucked up");
-                break;
-        }
-    }
-
-    public void TakeDamage()
-    {
-        if (!_isInvunrable)
-        {
-            //The rest of the code
-            _isInvunrable = true;
-        }
-    }
-
-    public void IncreaseCombo()
-    {
-        {
-            // increases the combo depending on if combo didn't reset and and the player hit a target 
-            Debug.Log("Combo Increased" + _comboCounter);
-            _isInCombo = true;
-            _comboCounter++;
-            if (_comboCounter > 2)
+            base.Attack();
+            switch (_comboCounter)
             {
-                Debug.Log("at increase");
-                ComboEnd();
+                case 1:
+                    _weapon.Attack(_damage, 0);
+                    Debug.Log("First hit");
+                    break;
+                case 2:
+                    _weapon.Attack(_damage * comboMultiplier, 0);
+                    Debug.Log("Second hit");
+                    break;
+                case 3:
+                    _weapon.Attack(_damage * comboMultiplier * comboMultiplier, _knockBack);
+                    Debug.Log("Third hit");
+                    break;
+                default:
+                    Debug.Log("I fucked up");
+                    break;
             }
         }
+    }
+    public void TakeDamage(float damage, float knockback ,Vector3 enemyPosition)
+    {
+       
+        if (!_isInvunrable)
+        {
+            //Things that happen when not invulnerable
 
+            //knockback handling
+            Debug.Log("player got hit" + knockback);
+            if (knockback != 0)
+            {
+                Knockback(knockback, enemyPosition);
+            }
+
+            //laugth meter handling
+
+
+        }
+    }
+    private void Knockback(float knockback, Vector3 enemyPosition) 
+    {
+        Debug.Log("reached knockback");
+        _isPushed = true;
+        _isInvunrable = true;
+        originalPosition = transform.position;
+        _pushDirection = (-(enemyPosition.x - transform.position.x)) / Mathf.Abs(enemyPosition.x - transform.position.x);
+    }
+    void CheckMovement(KeyCode key, float speedMult)
+    {
+        switch (key)
+        {
+            case (KeyCode.UpArrow):
+                if (transform.position.y <= THRESHOLDS[(int)Directions.North])
+                {
+
+                    if (!(transform.position.y + safeSpace > THRESHOLDS[(int)Directions.North]))
+                    {
+                        transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime);
+                    }
+
+                }
+                else
+                {
+                    transform.position = new Vector3(transform.position.x, THRESHOLDS[(int)Directions.North], transform.position.z);
+
+                }
+                break;
+
+            case (KeyCode.DownArrow):
+                if (transform.position.y >= THRESHOLDS[(int)Directions.South])
+                {
+
+                    if (!(transform.position.y - safeSpace < THRESHOLDS[(int)Directions.South]))
+                    {
+                        transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime);
+                    }
+
+                }
+                else
+                {
+                    transform.position = new Vector3(transform.position.x, THRESHOLDS[(int)Directions.South], transform.position.z);
+
+                }
+                break;
+            case (KeyCode.RightArrow):
+
+                if (transform.position.x <= THRESHOLDS[(int)Directions.East])
+                {
+
+                    if (!(transform.position.x + safeSpace > THRESHOLDS[(int)Directions.East]))
+                    {
+                        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0, 0) * speed * speedMult * Time.deltaTime);
+                    }
+
+                }
+                else
+                {
+                    transform.position = new Vector3(THRESHOLDS[(int)Directions.East], transform.position.y, transform.position.z);
+
+                }
+                break;
+
+            case (KeyCode.LeftArrow):
+
+                if (transform.position.x >= THRESHOLDS[(int)Directions.West])
+                {
+
+                    if (!(transform.position.x - safeSpace < THRESHOLDS[(int)Directions.West]))
+                    {
+                        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0, 0) * speed * speedMult * Time.deltaTime);
+                    }
+
+                }
+                else
+                {
+                    transform.position = new Vector3(THRESHOLDS[(int)Directions.West], transform.position.y, transform.position.z);
+
+                }
+                break;
+
+        }
     }
 
-    public void ComboEnd()
+
+
+
+    void BoostPlayerDamage()
     {
-        Debug.Log("Combo Over");
-        _comboCounter = 0;
-        _isInCombo = false;
+        //player.damage++
+    }
+    void BoostPlayerSpeed()
+    {
+        //player.Speed++
+    }
+    void BoostPlayerCrit()
+    {
+        //player.crit++
     }
 }
