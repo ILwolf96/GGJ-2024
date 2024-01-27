@@ -27,6 +27,6 @@ public class MyTimer
         return _timer >= _duration;
     }
 
-   
+
 
 }
