@@ -56,10 +56,12 @@ MonoBehaviour:
   comboWindow: 10
   currentHp: 80
   movementSpeed: 3
+  MeterPointToAdd: 10
   Defence: 3
   enemyIsDead: 0
   rotationSpeed: 2.41
   attackModeThreshold: 1
+  laughMeter: {fileID: 0}
 --- !u!70 &8553426673156295681
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
