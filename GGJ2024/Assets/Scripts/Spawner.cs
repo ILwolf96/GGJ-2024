@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] GameObject enemy;
+    [SerializeField] List<GameObject> _enemyList = new List<GameObject>();
     EnemyController enemyController;
     [SerializeField] PlayerController _player;
     [SerializeField] LaughMeter _laughMeter;
 
     public float spawnTime = 10.5f;
-    public static int maxEnemyAmount = 10;
+    public static int maxEnemyAmount = 20;
     public static int enemyCount = 0;
     private bool _spawnOnLeftSide = true;
 
@@ -22,30 +22,34 @@ public class Spawner : MonoBehaviour
 
     IEnumerator Spawn()
     {
+        int randomIndex;
+        randomIndex = Random.Range(0, _enemyList.Count);
+
         while (enemyCount < maxEnemyAmount)
         {
+            GameObject randomEnemy = _enemyList[randomIndex];
             Vector3 randomPos;
-            Quaternion randomRotLeft = enemy.transform.rotation;
-            Quaternion randomRotRight = enemy.transform.rotation;
+            Quaternion randomRot = randomEnemy.transform.rotation;
 
             if (_spawnOnLeftSide)
             {
                 randomPos = new Vector3(transform.position.x - 10.6f, transform.position.y - 3f, transform.position.z);
-                enemyController = Instantiate(enemy, randomPos, randomRotLeft).GetComponent<EnemyController>();
-
+                enemyController = Instantiate(randomEnemy, randomPos, randomRot).GetComponent<EnemyController>();
             }
             else if (!_spawnOnLeftSide)
             {
                 randomPos = new Vector3(transform.position.x + 10.6f, transform.position.y, transform.position.z);
-
-                enemyController = Instantiate(enemy, randomPos, randomRotRight).GetComponent<EnemyController>();
+                enemyController = Instantiate(randomEnemy, randomPos, randomRot).GetComponent<EnemyController>();
             }
+            
             if (enemyController != null && _player != null && _laughMeter != null)
             {
                 enemyController.SetPlayer(_player);
                 enemyController.SetLaughMeter(_laughMeter);
             }
+
             enemyCount++;
+            randomIndex = Random.Range(0, _enemyList.Count);
             _spawnOnLeftSide = !_spawnOnLeftSide;
             yield return new WaitForSeconds(spawnTime);
 
