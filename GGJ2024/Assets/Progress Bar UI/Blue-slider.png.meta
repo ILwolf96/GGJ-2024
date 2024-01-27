@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 134479d7db1f59f49afbb67d0afa40f8
+guid: 82639cdf283ef654d90e9fb8d6821e03
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -81,7 +81,33 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
     buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -110,13 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: bear leg spritesheet_0
+      name: Blue-slider_0
       rect:
         serializedVersion: 2
-        x: 22
-        y: 29
-        width: 217
-        height: 264
+        x: 2351
+        y: 1019
+        width: 1898
+        height: 486
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,92 +150,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 53d01827b4c792f42bc6b723eb0ad129
-      internalID: -1963029954
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bear leg spritesheet_1
-      rect:
-        serializedVersion: 2
-        x: 290
-        y: 24
-        width: 186
-        height: 273
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a746f9f9c4b98eb459b83bb7169eb777
-      internalID: -69548106
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bear leg spritesheet_2
-      rect:
-        serializedVersion: 2
-        x: 544
-        y: 26
-        width: 130
-        height: 270
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1f1ba19e8c4e790439a45efc9be9c3c3
-      internalID: -1017168445
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bear leg spritesheet_3
-      rect:
-        serializedVersion: 2
-        x: 762
-        y: 26
-        width: 123
-        height: 270
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 52862244d6bca0e49868159bc961c3f6
-      internalID: -42378227
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bear leg spritesheet_4
-      rect:
-        serializedVersion: 2
-        x: 969
-        y: 26
-        width: 186
-        height: 267
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 50e7c97543073144bbac202581fdbc3d
-      internalID: -1011562534
+      spriteID: 119c8391b9a0fd44d8358bb0a3a09583
+      internalID: -1648358371
       vertices: []
       indices: 
       edges: []
@@ -225,11 +167,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      bear leg spritesheet_0: -1963029954
-      bear leg spritesheet_1: -69548106
-      bear leg spritesheet_2: -1017168445
-      bear leg spritesheet_3: -42378227
-      bear leg spritesheet_4: -1011562534
+      Blue-slider_0: -1648358371
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

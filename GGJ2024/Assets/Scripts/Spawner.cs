@@ -5,14 +5,14 @@ using UnityEngine;
 public class Spawner : MonoBehaviour
 {
     [SerializeField] List<GameObject> _enemyList = new List<GameObject>();
-    EnemyController enemyController;
     [SerializeField] PlayerController _player;
     [SerializeField] LaughMeter _laughMeter;
+    private EnemyController enemyController;
 
+    private bool _spawnOnLeftSide = true;
     public float spawnTime = 10.5f;
     public static int maxEnemyAmount = 20;
     public static int enemyCount = 0;
-    private bool _spawnOnLeftSide = true;
 
     void Start()
     {
@@ -52,7 +52,6 @@ public class Spawner : MonoBehaviour
             randomIndex = Random.Range(0, _enemyList.Count);
             _spawnOnLeftSide = !_spawnOnLeftSide;
             yield return new WaitForSeconds(spawnTime);
-
         }
     }
 }

@@ -9,11 +9,9 @@ using static UnityEngine.GraphicsBuffer;
 public class EnemyController : ComboAttacker
 {
     private PlayerController _player;
-    public float currentHp = 80;
-    public float movementSpeed = 0.001f;
+    public static float currentHp = 50;
+    public static float movementSpeed = 0.2f;
     public float MeterPointToAdd;
-
-    public int Defence = 3; // what is this going to be used for?
     public bool enemyIsDead = false;
     public float rotationSpeed = 5f;
     public float attackModeThreshold = 1f;
@@ -28,11 +26,6 @@ public class EnemyController : ComboAttacker
         base.Start();
         _comboSize = 2;
     }
-
-
-   
-
-    // Update is called once per frame
     protected override void Update()
     {
         distance = Vector3.Distance(_player.transform.position, transform.position);
@@ -47,6 +40,12 @@ public class EnemyController : ComboAttacker
         if (distance > attackModeThreshold)
         {
                 //animator.SetTrigger("Walk1");
+        if (distance > attackModeThreshold)
+        {
+               
+                direction = _player.transform.position - transform.position;
+                direction.Normalize();
+
                 if (transform.position.y < PlayerController.THRESHOLDS[(int)PlayerController.Directions.North])
                 {
                     //Good Y space
@@ -65,13 +64,8 @@ public class EnemyController : ComboAttacker
                     EdgeMovmentBehaviour();
 
                 }
-            
-         
-           
         }
-
     }
-   
     private void WhereToLookAt()
     {
         if(_player.transform.position.x < transform.position.x && !_isLookingLeft)
@@ -111,18 +105,14 @@ public class EnemyController : ComboAttacker
              transform.position = new Vector3(transform.position.x, playerTransform.position.y, transform.position.z);
          }*/
     }
-
     private void EdgeMovmentBehaviour()
     {
         transform.Translate(new Vector3(direction.x, -1, 0) * movementSpeed * Time.deltaTime);
     }
-
-
     public void SetPlayer(PlayerController player)
     {
         _player = player;
     }
-
     public void SetLaughMeter(LaughMeter laughMeter)
     {
         _laughMeter = laughMeter;
@@ -152,7 +142,6 @@ public class EnemyController : ComboAttacker
     }
     public void TakeDamage(float damage, float knockback)
     {
-        Debug.Log("takes damage");
         currentHp -= damage;
         if (currentHp <= 0)
         {

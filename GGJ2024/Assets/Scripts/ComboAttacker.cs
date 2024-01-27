@@ -8,31 +8,24 @@ public abstract class ComboAttacker : MonoBehaviour
     [SerializeField] protected Weapon _weapon;
     public int _damage;
     public int _knockBack;
-
     public float attackDuration;
     public float betweenAttacksInterval;
     protected bool _canAttack = true;
-
     public float comboMultiplier;
     public float comboWindow;
     protected int _comboSize;
-
-    
-
     protected float _comboCounter = 1;
     protected bool _isInCombo = false;
 
-
     protected MyTimer _comboTimer;
     protected MyTimer _betweenAttacksTimer;
-    // Start is called before the first frame update
+    
     protected virtual void Start()
     {
         _comboTimer = new MyTimer(comboWindow);
         _betweenAttacksTimer = new MyTimer(betweenAttacksInterval);
     }
 
-    // Update is called once per frame
     protected virtual void Update()
     {
         { // Attack interval timing
@@ -65,9 +58,7 @@ public abstract class ComboAttacker : MonoBehaviour
                 }
             }
         }
-
     }
-
     protected virtual void Attack()
     {
         if (_isInCombo)
@@ -77,7 +68,6 @@ public abstract class ComboAttacker : MonoBehaviour
         _canAttack = false;
 
     }
-
     public void IncreaseCombo()
     {
         if (gameObject.tag == "Enemy")
@@ -91,7 +81,6 @@ public abstract class ComboAttacker : MonoBehaviour
             ComboEnd();
         }
     }
-
     public void ComboEnd()
     {
         if(gameObject.tag == "Player")

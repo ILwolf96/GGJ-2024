@@ -27,14 +27,12 @@ public abstract class Weapon : MonoBehaviour
         _rigid.gravityScale = 0;
     }
 
-    // Start is called before the first frame update
     protected virtual void Start()
     {
         boxCollider.enabled = false;
         _attackTimer = new MyTimer(Attacker.attackDuration);
     }
 
-    // Update is called once per frame
     protected virtual void Update()
     {
         if (_isAttacking)
@@ -54,7 +52,6 @@ public abstract class Weapon : MonoBehaviour
             _attackTimer.Reset();
             boxCollider.enabled = false;
         }
-
     }
 
     public void Attack(float damage, float knockback)
@@ -65,7 +62,6 @@ public abstract class Weapon : MonoBehaviour
         boxCollider.enabled = true;
     }
 
-
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         _numberOfHits++;
@@ -74,6 +70,5 @@ public abstract class Weapon : MonoBehaviour
             Attacker.IncreaseCombo();
             _successfulHit = true;
         }
-        
     }
 }
