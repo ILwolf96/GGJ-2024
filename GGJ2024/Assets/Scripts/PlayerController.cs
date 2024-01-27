@@ -14,7 +14,7 @@ public class PlayerController : ComboAttacker
     {
         North, South, West, East
     }
-    public static float[] THRESHOLDS = { -0.62f, -3.33f, -8.57f, 8.5f };
+    public static float[] THRESHOLDS = { -1.08f, -3.323f, -8.8f, 9.05f };
     public static float safeSpace = 0.01f;
 
     [SerializeField] Transform playerTransform;
