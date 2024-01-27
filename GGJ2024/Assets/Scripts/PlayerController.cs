@@ -14,7 +14,15 @@ public class PlayerController : ComboAttacker
     {
         North, South, West, East
     }
+<<<<<<< Updated upstream
     public static float[] THRESHOLDS = { -0.62f, -3.33f, -8.57f, 8.5f };
+=======
+    public float NorthBorder;
+    public float SouthBorder;
+    public float WestBorder;
+    public float EastBorder;
+    public static float[] THRESHOLDS = { 0, -3.323f, -8.8f, 9.05f };
+>>>>>>> Stashed changes
     public static float safeSpace = 0.01f;
 
     [SerializeField] Transform playerTransform;
@@ -50,6 +58,10 @@ public class PlayerController : ComboAttacker
 
     protected override void Start()
     {
+        THRESHOLDS[0] = NorthBorder;
+        THRESHOLDS[1] = SouthBorder;
+        THRESHOLDS[2] = EastBorder;
+        THRESHOLDS[3] = WestBorder;
         base.Start();
         _comboSize = 3;
         _invurnebltyT = new MyTimer(invunrabiltyInterval);
