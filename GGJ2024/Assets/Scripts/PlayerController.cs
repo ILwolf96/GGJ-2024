@@ -14,7 +14,7 @@ public class PlayerController : ComboAttacker
     {
         North, South, West, East
     }
-    public static float[] THRESHOLDS = { -1.08f, -3.323f, -8.8f, 9.05f };
+    public static float[] THRESHOLDS = { -0.62f, -3.33f, -8.57f, 8.5f };
     public static float safeSpace = 0.01f;
 
     [SerializeField] Transform playerTransform;
@@ -34,14 +34,13 @@ public class PlayerController : ComboAttacker
     private float _stunDur;
     private bool _isGrounded = true;
     private bool _isJumping = false;
-    public float MeterPointsToDecrease;
-    
+
     private Vector3 move;
+    private bool _isFlipped = false;
     private Vector3 groundPos;
     private Vector3 jumpPos;
     private Vector3 gravity = new Vector3(0, -2.5f, 0);
     private Vector3 originalPosition;
-    public LaughMeter laughMeter;   
 
 
 
@@ -61,7 +60,7 @@ public class PlayerController : ComboAttacker
         if (_isPushed)
         {
             //Pushed left
-            if(_pushDirection < 0)
+            if (_pushDirection < 0)
             {
                 if (transform.position.x >= THRESHOLDS[(int)Directions.West])
                 {
@@ -74,7 +73,7 @@ public class PlayerController : ComboAttacker
                     {
                         _isPushed = false;
                     }
-                    
+
                 }
                 else
                 {
@@ -109,7 +108,7 @@ public class PlayerController : ComboAttacker
 
 
 
-           
+
         }
         else if (_isGrounded)
         {
@@ -118,7 +117,7 @@ public class PlayerController : ComboAttacker
             if (Input.GetKey(KeyCode.Space) && !isAirborne())
             {
                 originalPosition = Jump();
-                
+
             }
             if (_isJumping)
             {
@@ -247,7 +246,7 @@ public class PlayerController : ComboAttacker
     }
     protected override void Attack()
     {
-       
+
         if (Input.GetKeyDown(_attackKey) && !isAirborne())
         {
             base.Attack();
@@ -267,14 +266,14 @@ public class PlayerController : ComboAttacker
                     break;
             }
         }
-        else if(Input.GetKeyDown(_attackKey))
+        else if (Input.GetKeyDown(_attackKey))
         {
             Debug.Log("Airborne attack");
         }
     }
-    public void TakeDamage(float damage, float knockback ,Vector3 enemyPosition)
+    public void TakeDamage(float damage, float knockback, Vector3 enemyPosition)
     {
-       
+
         if (!_isInvunrable)
         {
             //Things that happen when not invulnerable
@@ -285,17 +284,20 @@ public class PlayerController : ComboAttacker
                 Knockback(knockback, enemyPosition);
             }
 
-            laughMeter.loseLaugh(MeterPointsToDecrease);
+            //laugth meter handling
 
 
         }
     }
-    private void Knockback(float knockback, Vector3 enemyPosition) 
-    { 
+    private void Knockback(float knockback, Vector3 enemyPosition)
+    {
         _isPushed = true;
         _isInvunrable = true;
         originalPosition = transform.position;
+        
         _pushDirection = (-(enemyPosition.x - transform.position.x)) / Mathf.Abs(enemyPosition.x - transform.position.x);
+        
+        
     }
     void CheckMovement(KeyCode key, float speedMult)
     {
@@ -335,13 +337,14 @@ public class PlayerController : ComboAttacker
                 }
                 break;
             case (KeyCode.RightArrow):
-
+                _isFlipped = false;
+                transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
                 if (transform.position.x <= THRESHOLDS[(int)Directions.East])
                 {
 
                     if (!(transform.position.x + safeSpace > THRESHOLDS[(int)Directions.East]))
                     {
-                        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0, 0) * speed * speedMult * Time.deltaTime);
+                        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0, 0) * speed * speedMult * Time.deltaTime,Space.World);
                     }
 
                 }
@@ -350,16 +353,18 @@ public class PlayerController : ComboAttacker
                     transform.position = new Vector3(THRESHOLDS[(int)Directions.East], transform.position.y, transform.position.z);
 
                 }
+                
                 break;
 
             case (KeyCode.LeftArrow):
-
+                _isFlipped = true;  
+                transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
                 if (transform.position.x >= THRESHOLDS[(int)Directions.West])
                 {
 
                     if (!(transform.position.x - safeSpace < THRESHOLDS[(int)Directions.West]))
                     {
-                        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0, 0) * speed * speedMult * Time.deltaTime);
+                        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0, 0) * speed * speedMult * Time.deltaTime, Space.World);
                     }
 
                 }
@@ -368,6 +373,7 @@ public class PlayerController : ComboAttacker
                     transform.position = new Vector3(THRESHOLDS[(int)Directions.West], transform.position.y, transform.position.z);
 
                 }
+                
                 break;
 
         }

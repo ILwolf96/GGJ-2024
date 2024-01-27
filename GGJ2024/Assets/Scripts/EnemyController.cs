@@ -4,6 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 using Unity.VisualScripting;
 using UnityEngine;
 using static PlayerController;
+using static UnityEngine.GraphicsBuffer;
 
 public class EnemyController : ComboAttacker
 {
@@ -18,6 +19,7 @@ public class EnemyController : ComboAttacker
     public float attackModeThreshold = 1f;
     private LaughMeter _laughMeter;
 
+    private bool _isLookingLeft = true;
     private Vector3 direction;
 
     protected float distance; // Tomer: I need it as a field to check when to attack
@@ -37,19 +39,14 @@ public class EnemyController : ComboAttacker
         
         base.Update();
 
+        direction = _player.transform.position - transform.position;
+        direction.Normalize();
 
-
+        //WhereToLookAt();
 
         if (distance > attackModeThreshold)
         {
-            
-         
-               
                 //animator.SetTrigger("Walk1");
-                direction = _player.transform.position - transform.position;
-                direction.Normalize();
-
-
                 if (transform.position.y < PlayerController.THRESHOLDS[(int)PlayerController.Directions.North])
                 {
                     //Good Y space
@@ -75,7 +72,30 @@ public class EnemyController : ComboAttacker
 
     }
    
- 
+    private void WhereToLookAt()
+    {
+        if(_player.transform.position.x < transform.position.x && !_isLookingLeft)
+        {
+            //look left
+            Vector3 thescale = transform.localScale;
+            thescale.x *= -1;
+            transform.localScale = thescale;
+            _isLookingLeft = true;
+            
+
+        }
+        else
+        {
+            if (_isLookingLeft)
+            {
+                Vector3 thescale = transform.localScale;
+                thescale.x *= -1;
+                transform.localScale = thescale;
+                _isLookingLeft = false;
+            }
+
+        }
+    }
     private void AirbornePlayerMovementBehaviour()
     {
         
@@ -132,7 +152,7 @@ public class EnemyController : ComboAttacker
     }
     public void TakeDamage(float damage, float knockback)
     {
-       
+        Debug.Log("takes damage");
         currentHp -= damage;
         if (currentHp <= 0)
         {
