@@ -17,7 +17,7 @@ public class EnemyController : ComboAttacker
     public float attackModeThreshold = 1f;
     private LaughMeter _laughMeter;
 
-    private bool _isLookingLeft = true;
+    
     private Vector3 direction;
 
     protected float distance; // Tomer: I need it as a field to check when to attack
@@ -35,7 +35,7 @@ public class EnemyController : ComboAttacker
         direction = _player.transform.position - transform.position;
         direction.Normalize();
 
-        //WhereToLookAt();
+        WhereToLookAt();
 
         if (distance > attackModeThreshold)
         {
@@ -48,19 +48,21 @@ public class EnemyController : ComboAttacker
 
                 if (transform.position.y < PlayerController.THRESHOLDS[(int)PlayerController.Directions.North])
                 {
-                    //Good Y space
+                    //when in good space
                     if (!(transform.position.y + safeSpace * 5 > THRESHOLDS[(int)PlayerController.Directions.North]))
                     {
-                        // Will not go over
+                        // when below north threshold
                         NormalMovingBehaviour();
                     }
                     else
-                    {   // Will go over
+                    {   
+                    //when above north threshold in the future
                         EdgeMovmentBehaviour();
                     }
                 }
                 else
                 {
+                //when in bad space
                     EdgeMovmentBehaviour();
 
                 }
@@ -68,42 +70,22 @@ public class EnemyController : ComboAttacker
     }
     private void WhereToLookAt()
     {
-        if(_player.transform.position.x < transform.position.x && !_isLookingLeft)
+        if(direction.x < 0)
         {
             //look left
-            Vector3 thescale = transform.localScale;
-            thescale.x *= -1;
-            transform.localScale = thescale;
-            _isLookingLeft = true;
-            
+            transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
 
         }
         else
         {
-            if (_isLookingLeft)
-            {
-                Vector3 thescale = transform.localScale;
-                thescale.x *= -1;
-                transform.localScale = thescale;
-                _isLookingLeft = false;
-            }
-
+            //look right
+            transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
         }
     }
-    private void AirbornePlayerMovementBehaviour()
-    {
-        
-        transform.Translate(movementSpeed * Time.deltaTime * direction);
-    }
+   
     private void NormalMovingBehaviour()
     {
         transform.Translate(movementSpeed * Time.deltaTime * direction);
-
-        //The teleport for small distance in the Y axis
-        /* if (Mathf.Abs(playerTransform.position.y - transform.position.y) < 0.5)
-         {
-             transform.position = new Vector3(transform.position.x, playerTransform.position.y, transform.position.z);
-         }*/
     }
     private void EdgeMovmentBehaviour()
     {
