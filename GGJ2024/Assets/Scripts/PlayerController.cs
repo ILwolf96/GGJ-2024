@@ -34,12 +34,14 @@ public class PlayerController : ComboAttacker
     private float _stunDur;
     private bool _isGrounded = true;
     private bool _isJumping = false;
+    public float MeterPointsToDecrease;
     
     private Vector3 move;
     private Vector3 groundPos;
     private Vector3 jumpPos;
     private Vector3 gravity = new Vector3(0, -2.5f, 0);
     private Vector3 originalPosition;
+    public LaughMeter laughMeter;   
 
 
 
@@ -284,7 +286,7 @@ public class PlayerController : ComboAttacker
                 Knockback(knockback, enemyPosition);
             }
 
-            //laugth meter handling
+            laughMeter.loseLaugh(MeterPointsToDecrease);
 
 
         }
@@ -376,15 +378,15 @@ public class PlayerController : ComboAttacker
 
 
 
-    void BoostPlayerDamage()
+    public void BoostPlayerDamage()
     {
         //player.damage++
     }
-    void BoostPlayerSpeed()
+    public void BoostPlayerSpeed()
     {
         //player.Speed++
     }
-    void BoostPlayerCrit()
+    public void BoostPlayerCrit()
     {
         //player.crit++
     }

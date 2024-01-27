@@ -7,6 +7,7 @@ public class Spawner : MonoBehaviour
     [SerializeField] GameObject enemy;
     EnemyController enemyController;
     [SerializeField] PlayerController _player;
+    [SerializeField] LaughMeter _laughMeter;
 
     public float spawnTime = 10.5f;
     public static int maxEnemyAmount = 10;
@@ -39,9 +40,10 @@ public class Spawner : MonoBehaviour
 
                 enemyController = Instantiate(enemy, randomPos, randomRotRight).GetComponent<EnemyController>();
             }
-            if (enemyController != null && _player != null)
+            if (enemyController != null && _player != null && _laughMeter != null)
             {
                 enemyController.SetPlayer(_player);
+                enemyController.SetLaughMeter(_laughMeter);
             }
             enemyCount++;
             _spawnOnLeftSide = !_spawnOnLeftSide;

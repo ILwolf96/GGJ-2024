@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Upgrades : MonoBehaviour
 {
-    public GameObject player;
+    public PlayerController player;
     public GameObject can;
     public  Slider slider;
 
@@ -25,7 +25,7 @@ public class Upgrades : MonoBehaviour
 
     public void DamageBoost()
     {
-        //player.BoostPlayerDamage();
+        player.BoostPlayerDamage();
         print("damage boost");
         can.SetActive(false);
         Time.timeScale = 1; // resume game
@@ -34,7 +34,7 @@ public class Upgrades : MonoBehaviour
 
     public void SpeedBoost()
     {
-        //player.BoostPlayerSpeed()
+        player.BoostPlayerSpeed();
         print("speed boost");
         can.SetActive(false);
         Time.timeScale = 1; // resume game
@@ -43,7 +43,7 @@ public class Upgrades : MonoBehaviour
 
     public void CritChance()
     {
-        //player.BoostPlayerCrit()
+        player.BoostPlayerCrit();
         print("crit chance boost");
         can.SetActive(false);
         Time.timeScale = 1; // resume game

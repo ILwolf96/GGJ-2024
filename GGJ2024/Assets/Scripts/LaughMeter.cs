@@ -18,7 +18,7 @@ public class LaughMeter : MonoBehaviour
         slider.value += laugh;
     }
 
-    public void lossLaugh(float laugh)
+    public void loseLaugh(float laugh)
     {
         slider.value -= laugh;
     }
