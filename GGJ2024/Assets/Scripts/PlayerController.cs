@@ -9,7 +9,6 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 [RequireComponent(typeof(BoxCollider2D))]
 public class PlayerController : ComboAttacker
 {
-
     public enum Directions
     {
         North, South, West, East
@@ -35,7 +34,7 @@ public class PlayerController : ComboAttacker
     private bool _isGrounded = true;
     private bool _isJumping = false;
     public float MeterPointsToDecrease;
-    
+
     private Vector3 move;
     private Vector3 groundPos;
     private Vector3 jumpPos;
@@ -43,13 +42,10 @@ public class PlayerController : ComboAttacker
     private Vector3 originalPosition;
     public LaughMeter laughMeter;   
 
-
-
     public bool isAirborne()
     {
         return _isJumping || _isFalling;
     }
-
     protected override void Start()
     {
         base.Start();
@@ -162,7 +158,6 @@ public class PlayerController : ComboAttacker
             }
         }
     }
-
     public void Pushed()
     {
         transform.Translate(new Vector3(_pushDirection, 0, 0) * pushVelocity * Time.deltaTime);
@@ -171,7 +166,6 @@ public class PlayerController : ComboAttacker
             _isPushed = false;
         }
     }
-
     public void Move()
     {
         if (!_isJumping && !_isFalling)
@@ -369,23 +363,21 @@ public class PlayerController : ComboAttacker
 
                 }
                 break;
-
         }
     }
-
-
-
-
     public void BoostPlayerDamage()
     {
-        //player.damage++
+        _damage++;
+        EnemyController.currentHp += 10;
     }
     public void BoostPlayerSpeed()
     {
-        //player.Speed++
+        speed += 0.2f;
+        EnemyController.movementSpeed += 0.2f;
     }
     public void BoostPlayerCrit()
     {
-        //player.crit++
+        comboMultiplier++;
+        EnemyController.currentHp += 10;
     }
 }
