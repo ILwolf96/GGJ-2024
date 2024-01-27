@@ -29,7 +29,7 @@ public class EnemyController : ComboAttacker
     protected override void Update()
     {
         distance = Vector3.Distance(_player.transform.position, transform.position);
-        
+
         base.Update();
 
         direction = _player.transform.position - transform.position;
@@ -39,10 +39,10 @@ public class EnemyController : ComboAttacker
 
         if (distance > attackModeThreshold)
         {
-                //animator.SetTrigger("Walk1");
-        if (distance > attackModeThreshold)
-        {
-               
+            //animator.SetTrigger("Walk1");
+            if (distance > attackModeThreshold)
+            {
+
                 direction = _player.transform.position - transform.position;
                 direction.Normalize();
 
@@ -64,59 +64,61 @@ public class EnemyController : ComboAttacker
                     EdgeMovmentBehaviour();
 
                 }
+            }
         }
     }
-    private void WhereToLookAt()
-    {
-        if(_player.transform.position.x < transform.position.x && !_isLookingLeft)
+        private void WhereToLookAt()
         {
-            //look left
-            Vector3 thescale = transform.localScale;
-            thescale.x *= -1;
-            transform.localScale = thescale;
-            _isLookingLeft = true;
-            
-
-        }
-        else
-        {
-            if (_isLookingLeft)
+            if (_player.transform.position.x < transform.position.x && !_isLookingLeft)
             {
+                //look left
                 Vector3 thescale = transform.localScale;
                 thescale.x *= -1;
                 transform.localScale = thescale;
-                _isLookingLeft = false;
+                _isLookingLeft = true;
+
+
             }
+            else
+            {
+                if (_isLookingLeft)
+                {
+                    Vector3 thescale = transform.localScale;
+                    thescale.x *= -1;
+                    transform.localScale = thescale;
+                    _isLookingLeft = false;
+                }
 
+            }
         }
-    }
-    private void AirbornePlayerMovementBehaviour()
-    {
-        
-        transform.Translate(movementSpeed * Time.deltaTime * direction);
-    }
-    private void NormalMovingBehaviour()
-    {
-        transform.Translate(movementSpeed * Time.deltaTime * direction);
+        private void AirbornePlayerMovementBehaviour()
+        {
 
-        //The teleport for small distance in the Y axis
-        /* if (Mathf.Abs(playerTransform.position.y - transform.position.y) < 0.5)
-         {
-             transform.position = new Vector3(transform.position.x, playerTransform.position.y, transform.position.z);
-         }*/
-    }
-    private void EdgeMovmentBehaviour()
-    {
-        transform.Translate(new Vector3(direction.x, -1, 0) * movementSpeed * Time.deltaTime);
-    }
-    public void SetPlayer(PlayerController player)
-    {
-        _player = player;
-    }
-    public void SetLaughMeter(LaughMeter laughMeter)
-    {
-        _laughMeter = laughMeter;
-    }
+            transform.Translate(movementSpeed * Time.deltaTime * direction);
+        }
+        private void NormalMovingBehaviour()
+        {
+            transform.Translate(movementSpeed * Time.deltaTime * direction);
+
+            //The teleport for small distance in the Y axis
+            /* if (Mathf.Abs(playerTransform.position.y - transform.position.y) < 0.5)
+             {
+                 transform.position = new Vector3(transform.position.x, playerTransform.position.y, transform.position.z);
+             }*/
+        }
+        private void EdgeMovmentBehaviour()
+        {
+            transform.Translate(new Vector3(direction.x, -1, 0) * movementSpeed * Time.deltaTime);
+        }
+        public void SetPlayer(PlayerController player)
+        {
+            _player = player;
+        }
+        public void SetLaughMeter(LaughMeter laughMeter)
+        {
+            _laughMeter = laughMeter;
+        }
+    
     protected override void Attack()
     {
         if (distance <= attackModeThreshold)

@@ -7,6 +7,7 @@ public class Boss : MonoBehaviour
 {
     [SerializeField] GameObject _angryBoss;
     [SerializeField] GameObject _smileBoss;
+    [SerializeField] GameObject _MidTrans;
     [SerializeField] Slider _laughMeter;
 
     private void Update()
@@ -15,6 +16,11 @@ public class Boss : MonoBehaviour
         {
             _angryBoss.SetActive(true);
             _smileBoss.SetActive(false);
+        }
+        else if (_laughMeter.value > 65 && _laughMeter.value < 85)
+        {
+            _angryBoss.SetActive(false);
+            _MidTrans.SetActive(true);
         }
         else
         {

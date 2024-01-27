@@ -5,30 +5,27 @@ using UnityEngine;
 public class PlayerGraphic : MonoBehaviour
 {
     [SerializeField] Animator animator;
-    [SerializeField] Animation Movement;
-    [SerializeField] Animation Attack;
-    [SerializeField] Animation Hit;
-    [SerializeField] Animation Stun;
-    [SerializeField] Animation Jump;
+    public bool Movement;
+    public bool Attack;
+    public bool idle = true;
 
+    private void Update()
+    {
+        if (Movement)
+        {
+            StartMovementAnimation();
+        }  
+    }
     public void StartMovementAnimation()
     {
-        Movement.Play();
+        animator.Play("Walk");
     }
-    public void StartAttackAnimation()
+    public void StartAttack1Animation()
     {
-        Attack.Play();
+        animator.Play("Attack1");
     }
-    public void StartHitAnimation()
+    public void StartIdleAnimation()
     {
-        Hit.Play(); 
-    }
-    public void StartStunAnimation()
-    {
-        Stun.Play();    
-    }
-    public void StartJumpAnimation()
-    {
-        Jump.Play(); 
+        animator.Play("Idle");
     }
 }
