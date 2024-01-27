@@ -15,8 +15,11 @@ public abstract class Weapon : MonoBehaviour
     protected float _knockback;
     protected bool _successfulHit = false;
     protected bool _isAttacking = false;
-
-
+    protected int _numberOfHits = 0;
+    public bool SuccessfulHit
+    {
+        get { return _successfulHit; }
+    }
 
     void Awake()
     {
@@ -46,7 +49,8 @@ public abstract class Weapon : MonoBehaviour
                 Attacker.ComboEnd();
             }
             _successfulHit = false;
-            _isAttacking = false;
+            _isAttacking = false; 
+            _numberOfHits = 0;
             _attackTimer.Reset();
             boxCollider.enabled = false;
         }
@@ -62,5 +66,14 @@ public abstract class Weapon : MonoBehaviour
     }
 
 
-    protected abstract void OnTriggerEnter2D(Collider2D collision);
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
+    {
+        _numberOfHits++;
+        if(_numberOfHits == 1)
+        {
+            Attacker.IncreaseCombo();
+            _successfulHit = true;
+        }
+        
+    }
 }

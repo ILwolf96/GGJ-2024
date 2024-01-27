@@ -7,11 +7,11 @@ public class PlayerFist : Weapon
     {
         if (collision.gameObject.tag == "Enemy")
         {
+            EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
+            base.OnTriggerEnter2D (collision);
+            enemy.TakeDamage(_damage, _knockback);
             
-            Debug.Log("Enmey got hit");
-            Attacker.IncreaseCombo();
-            _successfulHit = true;
-            collision.gameObject.GetComponent<EnemyController>().TakeDamage(_damage,_knockback);
+                
         }
 
     }

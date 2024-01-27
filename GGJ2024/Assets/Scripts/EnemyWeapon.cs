@@ -9,9 +9,15 @@ public class EnemyWeapon : Weapon
     {
         if (collision.gameObject.tag == "Player")
         {
-            Attacker.IncreaseCombo();
-            _successfulHit = true;
-            collision.gameObject.GetComponent<PlayerController>().TakeDamage(_damage,_knockback,Attacker.transform.position);
+           
+
+            PlayerController player = collision.gameObject.GetComponent<PlayerController>();
+            if (!player.isAirborne())
+            {
+                base.OnTriggerEnter2D(collision);
+                player.TakeDamage(_damage, _knockback, Attacker.transform.position);
+            }
+            
         }
     }
 }

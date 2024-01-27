@@ -17,6 +17,8 @@ public abstract class ComboAttacker : MonoBehaviour
     public float comboWindow;
     protected int _comboSize;
 
+    
+
     protected float _comboCounter = 1;
     protected bool _isInCombo = false;
 
@@ -34,7 +36,7 @@ public abstract class ComboAttacker : MonoBehaviour
     protected virtual void Update()
     {
         { // Attack interval timing
-
+            
             //Waiting for the attack interval to end
             if (_betweenAttacksTimer.IsOver())
             {
@@ -78,11 +80,10 @@ public abstract class ComboAttacker : MonoBehaviour
 
     public void IncreaseCombo()
     {
-        if (gameObject.tag == "Player")
+        if (gameObject.tag == "Enemy")
         {
             Debug.Log("Combo Increased " + _comboCounter);
         }
-        
         _isInCombo = true;
         _comboCounter++;
         if (_comboCounter > _comboSize)
