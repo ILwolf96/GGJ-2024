@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 
 [RequireComponent(typeof(BoxCollider2D))]
@@ -17,23 +19,34 @@ public class PlayerController : ComboAttacker
 
     [SerializeField] Transform playerTransform;
 
-
+    public float pushDistance;
+    public float pushVelocity;
     public float speed = 4;
     public Vector3 jumpHeight = new Vector3(0, 2.5f, 0);
     public float invunrabiltyInterval;
     private KeyCode _attackKey = KeyCode.E;
+    private bool _isPushed = false;
+    private float _pushDirection;
     private bool _isInvunrable = false;
     private MyTimer _invurnebltyT;
     private float _laughMeter;
-    private bool _isFalling;
+    private bool _isFalling = false;
     private float _stunDur;
     private bool _isGrounded = true;
     private bool _isJumping = false;
+    
     private Vector3 move;
     private Vector3 groundPos;
     private Vector3 jumpPos;
     private Vector3 gravity = new Vector3(0, -2.5f, 0);
     private Vector3 originalPosition;
+
+
+
+    public bool isAirborne()
+    {
+        return _isJumping || _isFalling;
+    }
 
     protected override void Start()
     {
@@ -43,13 +56,67 @@ public class PlayerController : ComboAttacker
     }
     protected override void Update()
     {
-        if (_isGrounded)
+        if (_isPushed)
+        {
+            //Pushed left
+            if(_pushDirection < 0)
+            {
+                if (transform.position.x >= THRESHOLDS[(int)Directions.West])
+                {
+
+                    if (!(transform.position.x - safeSpace < THRESHOLDS[(int)Directions.West]))
+                    {
+                        Pushed();
+                    }
+                    else
+                    {
+                        _isPushed = false;
+                    }
+                    
+                }
+                else
+                {
+                    transform.position = new Vector3(THRESHOLDS[(int)Directions.West], transform.position.y, transform.position.z);
+                    _isPushed = false;
+
+                }
+
+            }
+            //Pushed left
+            else
+            {
+                if (transform.position.x <= THRESHOLDS[(int)Directions.East])
+                {
+
+                    if (!(transform.position.x + safeSpace > THRESHOLDS[(int)Directions.East]))
+                    {
+                        Pushed();
+                    }
+                    else
+                    {
+                        _isPushed = false;
+                    }
+                }
+                else
+                {
+                    transform.position = new Vector3(THRESHOLDS[(int)Directions.East], transform.position.y, transform.position.z);
+                    _isPushed = false;
+                }
+
+            }
+
+
+
+           
+        }
+        else if (_isGrounded)
         {
             Move();
 
             if (Input.GetKey(KeyCode.Space) && !_isFalling && !_isJumping)
             {
                 originalPosition = Jump();
+                Debug.Log("In Player");
             }
             if (_isJumping)
             {
@@ -84,6 +151,7 @@ public class PlayerController : ComboAttacker
         // Invulnerability timing
         if (_isInvunrable)
         {
+            Debug.Log("INVIS");
             _invurnebltyT.Tick();
 
             if (_invurnebltyT.IsOver())
@@ -93,6 +161,17 @@ public class PlayerController : ComboAttacker
             }
         }
     }
+
+    public void Pushed()
+    {
+        transform.Translate(new Vector3(_pushDirection, 0, 0) * pushVelocity * Time.deltaTime);
+        if (Math.Abs(originalPosition.x - transform.position.x) >= pushDistance)
+        {
+            Debug.Log("push is over");
+            _isPushed = false;
+        }
+    }
+
     public void Move()
     {
         if (!_isJumping && !_isFalling)
@@ -150,9 +229,8 @@ public class PlayerController : ComboAttacker
             {
                 CheckMovement(KeyCode.LeftArrow, 1);
             }
-
             // only right
-            if (Input.GetKey(KeyCode.RightArrow))
+            else if (Input.GetKey(KeyCode.RightArrow))
             {
                 CheckMovement(KeyCode.RightArrow, 1);
             }
@@ -192,15 +270,33 @@ public class PlayerController : ComboAttacker
             }
         }
     }
-    public void TakeDamage()
+    public void TakeDamage(float damage, float knockback ,Vector3 enemyPosition)
     {
+       
         if (!_isInvunrable)
         {
             //Things that happen when not invulnerable
 
+            //knockback handling
+            Debug.Log("player got hit" + knockback);
+            if (knockback != 0)
+            {
+                Knockback(knockback, enemyPosition);
+            }
+
+            //laugth meter handling
+
+
         }
     }
-
+    private void Knockback(float knockback, Vector3 enemyPosition) 
+    {
+        Debug.Log("reached knockback");
+        _isPushed = true;
+        _isInvunrable = true;
+        originalPosition = transform.position;
+        _pushDirection = (-(enemyPosition.x - transform.position.x)) / Mathf.Abs(enemyPosition.x - transform.position.x);
+    }
     void CheckMovement(KeyCode key, float speedMult)
     {
         switch (key)

@@ -5,8 +5,8 @@ using UnityEngine;
 public class Spawner : MonoBehaviour
 {
     [SerializeField] GameObject enemy;
-    [SerializeField] EnemyController enemyController;
-    [SerializeField] Transform playerTransform;
+    EnemyController enemyController;
+    [SerializeField] PlayerController _player;
 
     public float spawnTime = 10.5f;
     public static int maxEnemyAmount = 10;
@@ -30,18 +30,18 @@ public class Spawner : MonoBehaviour
             if (_spawnOnLeftSide)
             {
                 randomPos = new Vector3(transform.position.x - 10.6f, transform.position.y - 3f, transform.position.z);
-                Instantiate(enemy, randomPos, randomRotLeft);
+                enemyController = Instantiate(enemy, randomPos, randomRotLeft).GetComponent<EnemyController>();
 
             }
             else if (!_spawnOnLeftSide)
             {
                 randomPos = new Vector3(transform.position.x + 10.6f, transform.position.y, transform.position.z);
 
-                Instantiate(enemy, randomPos, randomRotRight);
+                enemyController = Instantiate(enemy, randomPos, randomRotRight).GetComponent<EnemyController>();
             }
-            if (enemyController != null && playerTransform != null)
+            if (enemyController != null && _player != null)
             {
-                enemyController.SetPlayerTransform(playerTransform);
+                enemyController.SetPlayer(_player);
             }
             enemyCount++;
             _spawnOnLeftSide = !_spawnOnLeftSide;

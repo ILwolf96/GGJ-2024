@@ -78,7 +78,11 @@ public abstract class ComboAttacker : MonoBehaviour
 
     public void IncreaseCombo()
     {
-        Debug.Log("Combo Increased " + _comboCounter);
+        if (gameObject.tag == "Player")
+        {
+            Debug.Log("Combo Increased " + _comboCounter);
+        }
+        
         _isInCombo = true;
         _comboCounter++;
         if (_comboCounter > _comboSize)
@@ -89,7 +93,11 @@ public abstract class ComboAttacker : MonoBehaviour
 
     public void ComboEnd()
     {
-        Debug.Log("Combo Over");
+        if(gameObject.tag == "Player")
+        {
+            Debug.Log("Combo Over");
+        }
+        
         _comboCounter = 1;
         _isInCombo = false;
     }

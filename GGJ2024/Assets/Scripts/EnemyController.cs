@@ -7,13 +7,15 @@ using static PlayerController;
 
 public class EnemyController : ComboAttacker
 {
-    public Transform playerTransform;
+    private PlayerController _player;
     public float currentHp = 80;
     public float movementSpeed = 0.001f;
+    
     public int Defence = 3; // what is this going to be used for?
     public bool enemyIsDead = false;
     public float rotationSpeed = 5f;
     public float attackModeThreshold = 1f;
+    
 
     private Vector3 direction;
 
@@ -28,38 +30,52 @@ public class EnemyController : ComboAttacker
     // Update is called once per frame
     protected override void Update()
     {
-        distance = Vector3.Distance(playerTransform.transform.position, transform.position);
-
+        distance = Vector3.Distance(_player.transform.position, transform.position);
+        
         base.Update();
+
+
+
+
         if (distance > attackModeThreshold)
         {
-            //animator.SetTrigger("Walk1");
-            direction = playerTransform.position - transform.position;
-            direction.Normalize();
+            
+         
+               
+                //animator.SetTrigger("Walk1");
+                direction = _player.transform.position - transform.position;
+                direction.Normalize();
 
 
-            if (transform.position.y < PlayerController.THRESHOLDS[(int)PlayerController.Directions.North])
-            {
-                //Good Y space
-                if (!(transform.position.y + safeSpace * 5 > THRESHOLDS[(int)PlayerController.Directions.North]))
+                if (transform.position.y < PlayerController.THRESHOLDS[(int)PlayerController.Directions.North])
                 {
-                    // Will not go over
-                    NormalMovingBehaviour();
+                    //Good Y space
+                    if (!(transform.position.y + safeSpace * 5 > THRESHOLDS[(int)PlayerController.Directions.North]))
+                    {
+                        // Will not go over
+                        NormalMovingBehaviour();
+                    }
+                    else
+                    {   // Will go over
+                        EdgeMovmentBehaviour();
+                    }
                 }
                 else
-                {   // Will go over
+                {
                     EdgeMovmentBehaviour();
-                }
-            }
-            else
-            {
-                EdgeMovmentBehaviour();
 
-            }
+                }
+            
+         
+           
         }
     }
 
-
+    private void AirbornePlayerMovementBehaviour()
+    {
+        
+        transform.Translate(movementSpeed * Time.deltaTime * direction);
+    }
     private void NormalMovingBehaviour()
     {
         transform.Translate(movementSpeed * Time.deltaTime * direction);
@@ -77,9 +93,9 @@ public class EnemyController : ComboAttacker
     }
 
 
-    public void SetPlayerTransform(Transform player)
+    public void SetPlayer(PlayerController player)
     {
-        playerTransform = player;
+        _player = player;
     }
 
     protected override void Attack()
@@ -96,7 +112,7 @@ public class EnemyController : ComboAttacker
                     //Debug.Log("First hit");
                     break;
                 case 2:
-                    _weapon.Attack(_damage * comboMultiplier, 0);
+                    _weapon.Attack(_damage * comboMultiplier, _knockBack);
                     //Debug.Log("Second hit");
                     break;
                 default:
@@ -116,29 +132,24 @@ public class EnemyController : ComboAttacker
         }
         else if (knockback != 0)
         {
-            Knockback();
+            Knockback(knockback);
         }
     }
-    public void Knockback() //need to check if it needs to change 
+    private void Knockback(float knockback) //need to check if it needs to change 
     {
+      
         Vector3 newPosition = transform.position;
-        //float knockDir = -(playerTransform.position.x - newPosition.x) / (Mathf.Abs(playerTransform.position.x - newPosition.x));
-        if (newPosition.x < playerTransform.position.x)
-        {
-            newPosition.x = transform.position.x - 1f;
-            transform.position = newPosition;
-        }
-        else if (newPosition.x > playerTransform.position.x)
-        {
-            newPosition.x = transform.position.x + 1f;
-            transform.position = newPosition;
-        }
-
+        float knockDir = (-(_player.transform.position.x - newPosition.x)) / Mathf.Abs(_player.transform.position.x - newPosition.x);
+        newPosition.x = transform.position.x + knockback * knockDir;
+        transform.position = newPosition;
     }
-    public void Die()
+    private void Die()
     {
         /*animator.ResetTrigger("Walk1");
         FallAnimation();*/
+
+        //Laugth meter handling
+
         Destroy(gameObject);
         Spawner.enemyCount--;
     }

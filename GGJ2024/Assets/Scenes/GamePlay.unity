@@ -536,15 +536,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _weapon: {fileID: 792717876}
-  _damage: 80
-  _knockBack: 0
+  _damage: 1
+  _knockBack: 5
   attackDuration: 1
   betweenAttacksInterval: 2
   comboMultiplier: 3
   comboWindow: 10
+  playerTransform: {fileID: 0}
+  pushDistance: 3
+  pushVelocity: 10
   speed: 4
   jumpHeight: {x: 0, y: 2.5, z: 0}
-  invunrabiltyInterval: 0
+  invunrabiltyInterval: 1
 --- !u!4 &1515109151
 Transform:
   m_ObjectHideFlags: 0
@@ -736,8 +739,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemy: {fileID: 450033634576709653, guid: 33280ec08c368fd40919fcf4bcbde9ad, type: 3}
-  enemyController: {fileID: 2600864700924755880, guid: 33280ec08c368fd40919fcf4bcbde9ad, type: 3}
-  playerTransform: {fileID: 1515109151}
+  _player: {fileID: 1515109147}
   spawnTime: 5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

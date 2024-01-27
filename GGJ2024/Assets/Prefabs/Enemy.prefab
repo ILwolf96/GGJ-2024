@@ -49,17 +49,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _weapon: {fileID: 1050675830017906343}
   _damage: 80
-  _knockBack: 0
+  _knockBack: 5
   attackDuration: 1
   betweenAttacksInterval: 2
   comboMultiplier: 3
   comboWindow: 10
-  playerTransform: {fileID: 0}
   currentHp: 80
-  movementSpeed: 0.2
+  movementSpeed: 3
   Defence: 3
   enemyIsDead: 0
   rotationSpeed: 2.41
+  attackModeThreshold: 1
 --- !u!70 &8553426673156295681
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
