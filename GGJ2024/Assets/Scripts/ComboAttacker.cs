@@ -5,7 +5,7 @@ using UnityEngine;
 
 public abstract class ComboAttacker : MonoBehaviour
 {
-    [SerializeField] protected  Weapon _weapon;
+    [SerializeField] protected Weapon _weapon;
     public int _damage;
     public int _knockBack;
 
@@ -24,14 +24,14 @@ public abstract class ComboAttacker : MonoBehaviour
     protected MyTimer _comboTimer;
     protected MyTimer _betweenAttacksTimer;
     // Start is called before the first frame update
-    protected virtual void  Start()
+    protected virtual void Start()
     {
         _comboTimer = new MyTimer(comboWindow);
         _betweenAttacksTimer = new MyTimer(betweenAttacksInterval);
     }
 
     // Update is called once per frame
-    protected virtual void  Update()
+    protected virtual void Update()
     {
         { // Attack interval timing
 
@@ -43,7 +43,7 @@ public abstract class ComboAttacker : MonoBehaviour
             }
             if (_canAttack)
             {
-               Attack();
+                Attack();
             }
             else
             {

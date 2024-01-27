@@ -13,6 +13,9 @@ public class EnemyController : ComboAttacker
     public int Defence = 3; // what is this going to be used for?
     public bool enemyIsDead = false;
     public float rotationSpeed = 5f;
+    public float attackModeThreshold = 1f;
+
+    private Vector3 direction;
 
     protected float distance; // Tomer: I need it as a field to check when to attack
     protected override void Start()
@@ -20,43 +23,60 @@ public class EnemyController : ComboAttacker
         base.Start();
         _comboSize = 2;
     }
-    
+
 
     // Update is called once per frame
     protected override void Update()
     {
         distance = Vector3.Distance(playerTransform.transform.position, transform.position);
-        
+
         base.Update();
-        if (distance > 2)
+        if (distance > attackModeThreshold)
         {
             //animator.SetTrigger("Walk1");
-            Vector3 direction = playerTransform.position - transform.position;
+            direction = playerTransform.position - transform.position;
+            direction.Normalize();
 
 
-            if (transform.position.y <= PlayerController.THRESHOLDS[(int)PlayerController.Directions.North])
+            if (transform.position.y < PlayerController.THRESHOLDS[(int)PlayerController.Directions.North])
             {
-                if (!(transform.position.y + safeSpace > THRESHOLDS[(int)Directions.North]))
+                //Good Y space
+                if (!(transform.position.y + safeSpace * 5 > THRESHOLDS[(int)PlayerController.Directions.North]))
                 {
-                    transform.Translate(direction * movementSpeed * Time.deltaTime);
+                    // Will not go over
+                    NormalMovingBehaviour();
+                }
+                else
+                {   // Will go over
+                    EdgeMovmentBehaviour();
                 }
             }
             else
             {
-                transform.position = new Vector3(transform.position.x, THRESHOLDS[(int)Directions.North], transform.position.z);
-            }
+                EdgeMovmentBehaviour();
 
-
-            float yDistance = Mathf.Abs(playerTransform.position.y - transform.position.y);
-
-            if (yDistance < 0.5)
-            {
-                Vector3 newPosition = transform.position;
-                newPosition.y = playerTransform.position.y;
-                transform.position = newPosition;
             }
         }
     }
+
+
+    private void NormalMovingBehaviour()
+    {
+        transform.Translate(movementSpeed * Time.deltaTime * direction);
+
+        //The teleport for small distance in the Y axis
+        /* if (Mathf.Abs(playerTransform.position.y - transform.position.y) < 0.5)
+         {
+             transform.position = new Vector3(transform.position.x, playerTransform.position.y, transform.position.z);
+         }*/
+    }
+
+    private void EdgeMovmentBehaviour()
+    {
+        transform.Translate(new Vector3(direction.x, -1, 0) * movementSpeed * Time.deltaTime);
+    }
+
+
     public void SetPlayerTransform(Transform player)
     {
         playerTransform = player;
@@ -64,7 +84,7 @@ public class EnemyController : ComboAttacker
 
     protected override void Attack()
     {
-        if (distance <= 2)
+        if (distance <= attackModeThreshold)
         {
             /*animator.ResetTrigger("Walk1");
             AttackAnimation();*/

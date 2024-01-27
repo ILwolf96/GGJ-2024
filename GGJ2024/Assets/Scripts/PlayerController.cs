@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-[RequireComponent (typeof(BoxCollider2D))]
+
+[RequireComponent(typeof(BoxCollider2D))]
 public class PlayerController : ComboAttacker
 {
 
@@ -15,6 +15,7 @@ public class PlayerController : ComboAttacker
     public static float[] THRESHOLDS = { -0.62f, -3.33f, -8.57f, 8.5f };
     public static float safeSpace = 0.01f;
 
+    [SerializeField] Transform playerTransform;
 
 
     public float speed = 4;
@@ -31,7 +32,7 @@ public class PlayerController : ComboAttacker
     private Vector3 move;
     private Vector3 groundPos;
     private Vector3 jumpPos;
-    private Vector3 gravity = new Vector3 (0,-2.5f,0);
+    private Vector3 gravity = new Vector3(0, -2.5f, 0);
     private Vector3 originalPosition;
 
     protected override void Start()
@@ -96,29 +97,69 @@ public class PlayerController : ComboAttacker
     {
         if (!_isJumping && !_isFalling)
         {
-            if (Input.GetKey(KeyCode.UpArrow))
+            //down left
+            if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.LeftArrow))
             {
-                CheckMovement(KeyCode.UpArrow);
+                CheckMovement(KeyCode.DownArrow, 0.8f);
+                CheckMovement(KeyCode.LeftArrow, 0.8f);
             }
-            if (Input.GetKey(KeyCode.DownArrow))
+            //down right
+            else if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.RightArrow))
             {
-                CheckMovement(KeyCode.DownArrow);
+                CheckMovement(KeyCode.DownArrow, 0.8f);
+                CheckMovement(KeyCode.RightArrow, 0.8f);
             }
-            if (Input.GetKey(KeyCode.RightArrow))
+            //up right
+            else if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.RightArrow))
             {
-                CheckMovement(KeyCode.RightArrow);
+                CheckMovement(KeyCode.UpArrow, 0.8f);
+                CheckMovement(KeyCode.RightArrow, 0.8f);
             }
-            if (Input.GetKey(KeyCode.LeftArrow))
+            //up left
+            else if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.LeftArrow))
             {
-                CheckMovement(KeyCode.LeftArrow);
+                CheckMovement(KeyCode.UpArrow, 0.8f);
+                CheckMovement(KeyCode.LeftArrow, 0.8f);
             }
+            //Only up
+            else if (Input.GetKey(KeyCode.UpArrow))
+            {
+                CheckMovement(KeyCode.UpArrow, 1);
+            }
+            //Only down
+            else if (Input.GetKey(KeyCode.DownArrow))
+            {
+                CheckMovement(KeyCode.DownArrow, 1);
+            }
+            //Only left
+            else if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                CheckMovement(KeyCode.LeftArrow, 1);
+            }
+            //Only right
+            else if (Input.GetKey(KeyCode.RightArrow))
+            {
+                CheckMovement(KeyCode.RightArrow, 1);
+            }
+
         }
         else
         {
+            // only left
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                CheckMovement(KeyCode.LeftArrow, 1);
+            }
+
+            // only right
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                CheckMovement(KeyCode.RightArrow, 1);
+            }
             move = new Vector3(Input.GetAxis("Horizontal"), 0, 0);
-            transform.Translate(move * speed * Time.deltaTime);
+
         }
-        
+
     }
     public Vector3 Jump()
     {
@@ -160,22 +201,24 @@ public class PlayerController : ComboAttacker
         }
     }
 
-    void CheckMovement(KeyCode key)
+    void CheckMovement(KeyCode key, float speedMult)
     {
         switch (key)
         {
             case (KeyCode.UpArrow):
                 if (transform.position.y <= THRESHOLDS[(int)Directions.North])
                 {
-                    
-                    if (!(transform.position.y + safeSpace  > THRESHOLDS[(int)Directions.North]))
+
+                    if (!(transform.position.y + safeSpace > THRESHOLDS[(int)Directions.North]))
                     {
-                        transform.Translate((new Vector3(0, Input.GetAxis("Vertical"), 0)) * speed * Time.deltaTime);
+                        transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime);
                     }
+
                 }
                 else
                 {
                     transform.position = new Vector3(transform.position.x, THRESHOLDS[(int)Directions.North], transform.position.z);
+
                 }
                 break;
 
@@ -185,12 +228,14 @@ public class PlayerController : ComboAttacker
 
                     if (!(transform.position.y - safeSpace < THRESHOLDS[(int)Directions.South]))
                     {
-                        transform.Translate((new Vector3(0, Input.GetAxis("Vertical"), 0)) * speed * Time.deltaTime);
+                        transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime);
                     }
+
                 }
                 else
                 {
                     transform.position = new Vector3(transform.position.x, THRESHOLDS[(int)Directions.South], transform.position.z);
+
                 }
                 break;
             case (KeyCode.RightArrow):
@@ -200,12 +245,14 @@ public class PlayerController : ComboAttacker
 
                     if (!(transform.position.x + safeSpace > THRESHOLDS[(int)Directions.East]))
                     {
-                        transform.Translate((new Vector3(Input.GetAxis("Horizontal"),0 , 0)) * speed * Time.deltaTime);
+                        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0, 0) * speed * speedMult * Time.deltaTime);
                     }
+
                 }
                 else
                 {
                     transform.position = new Vector3(THRESHOLDS[(int)Directions.East], transform.position.y, transform.position.z);
+
                 }
                 break;
 
@@ -216,14 +263,17 @@ public class PlayerController : ComboAttacker
 
                     if (!(transform.position.x - safeSpace < THRESHOLDS[(int)Directions.West]))
                     {
-                        transform.Translate((new Vector3(Input.GetAxis("Horizontal"), 0, 0)) * speed * Time.deltaTime);
+                        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0, 0) * speed * speedMult * Time.deltaTime);
                     }
+
                 }
                 else
                 {
                     transform.position = new Vector3(THRESHOLDS[(int)Directions.West], transform.position.y, transform.position.z);
+
                 }
                 break;
+
         }
     }
 

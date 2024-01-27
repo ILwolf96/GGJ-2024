@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public abstract class Weapon : MonoBehaviour
 {
-    [SerializeField] protected  ComboAttacker Attacker;
+    [SerializeField] protected ComboAttacker Attacker;
     [SerializeField] protected BoxCollider2D boxCollider;
     [SerializeField] protected Rigidbody2D _rigid;
 
@@ -16,7 +16,7 @@ public abstract class Weapon : MonoBehaviour
     protected bool _successfulHit = false;
     protected bool _isAttacking = false;
 
-  
+
 
     void Awake()
     {
