@@ -13,6 +13,9 @@ public class EnemyController : ComboAttacker
     public int Defence = 3; // what is this going to be used for?
     public bool enemyIsDead = false;
     public float rotationSpeed = 5f;
+    public float attackModeThreshold = 1f;
+
+    private Vector3 direction;
 
     protected float distance; // Tomer: I need it as a field to check when to attack
     protected override void Start()
@@ -28,6 +31,7 @@ public class EnemyController : ComboAttacker
         distance = Vector3.Distance(playerTransform.transform.position, this.transform.position);
         
         base.Update();
+<<<<<<< Updated upstream
 
         if (currentHp <= 0)
         {
@@ -41,10 +45,15 @@ public class EnemyController : ComboAttacker
 
         }
         if (distance > 2)
+=======
+        if (distance > attackModeThreshold)
+>>>>>>> Stashed changes
         {
             //animator.SetTrigger("Walk1");
-            Vector3 direction = playerTransform.position - transform.position;
+            direction = playerTransform.position - transform.position;
+            direction.Normalize();
 
+<<<<<<< Updated upstream
             transform.Translate(direction * movementSpeed * Time.deltaTime);
 
             float yDistance = Mathf.Abs(playerTransform.position.y - transform.position.y);
@@ -54,6 +63,26 @@ public class EnemyController : ComboAttacker
                 Vector3 newPosition = transform.position;
                 newPosition.y = playerTransform.position.y;
                 transform.position = newPosition;
+=======
+
+            if (transform.position.y < PlayerController.THRESHOLDS[(int)PlayerController.Directions.North])
+            {
+                //Good Y space
+                if (!(transform.position.y + safeSpace * 5  > THRESHOLDS[(int)PlayerController.Directions.North]))
+                {
+                    // Will not go over
+                    NormalMovingBehaviour();
+                }
+                else
+                {   // Will go over
+                    EdgeMovmentBehaviour();
+                }
+            }
+            else
+            {
+                EdgeMovmentBehaviour();
+
+>>>>>>> Stashed changes
             }
         }
         if (enemyIsDead)
@@ -62,6 +91,25 @@ public class EnemyController : ComboAttacker
             Spawner.enemyCount--;
         }
     }
+
+
+    private void NormalMovingBehaviour()
+    {
+        transform.Translate(movementSpeed * Time.deltaTime * direction);
+
+        //The teleport for small distance in the Y axis
+       /* if (Mathf.Abs(playerTransform.position.y - transform.position.y) < 0.5)
+        {
+            transform.position = new Vector3(transform.position.x, playerTransform.position.y, transform.position.z);
+        }*/
+    }
+
+    private void EdgeMovmentBehaviour()
+    {
+        transform.Translate(new Vector3(direction.x, -1, 0) * movementSpeed * Time.deltaTime);
+    }
+
+
     public void SetPlayerTransform(Transform player)
     {
         playerTransform = player;
@@ -69,7 +117,7 @@ public class EnemyController : ComboAttacker
 
     protected override void Attack()
     {
-        if (distance <= 2)
+        if (distance <= attackModeThreshold)
         {
             /*animator.ResetTrigger("Walk1");
             AttackAnimation();*/

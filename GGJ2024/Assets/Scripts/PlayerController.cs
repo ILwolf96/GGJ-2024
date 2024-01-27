@@ -2,14 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
+
 
 //[RequireComponent(typeof(CharacterController))]
 [RequireComponent (typeof(CapsuleCollider2D))]
 public class PlayerController : ComboAttacker
 {
+<<<<<<< Updated upstream
     //[SerializeField] CharacterController CharController;
     
+=======
+   
+    public enum Directions
+    {
+        North, South, West, East
+    }
+    public static float[] THRESHOLDS = { -0.62f, -3.33f, -8.57f, 8.5f };
+    public static  float safeSpace = 0.01f;
+
+    [SerializeField] Transform playerTransform;
+
+>>>>>>> Stashed changes
 
     public float speed = 4;
     public Vector3 jumpHeight = new Vector3(0, 2.5f, 0);
@@ -89,10 +102,78 @@ public class PlayerController : ComboAttacker
 
     public void Move()
     {
+<<<<<<< Updated upstream
         // Player movement
         move = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
         //CharController.Move(move * Time.deltaTime * speed);
         move = Vector3.zero;
+=======
+        if (!_isJumping && !_isFalling)
+        {
+            //down left
+            if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.LeftArrow))
+            {
+                CheckMovement(KeyCode.DownArrow, 0.8f);
+                CheckMovement(KeyCode.LeftArrow, 0.8f);
+            }
+            //down right
+            else if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.RightArrow))
+            {
+                CheckMovement(KeyCode.DownArrow, 0.8f);
+                CheckMovement(KeyCode.RightArrow, 0.8f);
+            }
+            //up right
+            else if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.RightArrow))
+            {
+                CheckMovement(KeyCode.UpArrow, 0.8f);
+                CheckMovement(KeyCode.RightArrow, 0.8f);
+            }
+            //up left
+            else if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.LeftArrow))
+            {
+                CheckMovement(KeyCode.UpArrow, 0.8f);
+                CheckMovement(KeyCode.LeftArrow, 0.8f);
+            }
+            //Only up
+            else if (Input.GetKey(KeyCode.UpArrow))
+            {
+                CheckMovement(KeyCode.UpArrow, 1);
+            }
+            //Only down
+            else if (Input.GetKey(KeyCode.DownArrow))
+            {
+                CheckMovement(KeyCode.DownArrow, 1);
+            }
+            //Only left
+            else if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                CheckMovement(KeyCode.LeftArrow, 1);
+            }
+            //Only right
+            else if (Input.GetKey(KeyCode.RightArrow))
+            {
+                CheckMovement(KeyCode.RightArrow, 1);
+            }
+
+        }
+        else
+        {
+            // only left
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                CheckMovement(KeyCode.LeftArrow, 1);
+            }
+
+            // only right
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                CheckMovement(KeyCode.RightArrow, 1);
+            }
+            move = new Vector3(Input.GetAxis("Horizontal"), 0, 0);
+           
+        }
+        
+>>>>>>> Stashed changes
     }
 
     public void Jump()
@@ -145,4 +226,99 @@ public class PlayerController : ComboAttacker
             
         }
     }
+<<<<<<< Updated upstream
+=======
+
+    void CheckMovement(KeyCode key,float speedMult)
+    {
+        switch (key)
+        {
+            case (KeyCode.UpArrow):
+                if (transform.position.y <= THRESHOLDS[(int)Directions.North])
+                {
+                    
+                    if (!(transform.position.y + safeSpace  > THRESHOLDS[(int)Directions.North]))
+                    {
+                        transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime); 
+                    }
+                    
+                }
+                else
+                {
+                    transform.position = new Vector3(transform.position.x, THRESHOLDS[(int)Directions.North], transform.position.z);
+                    
+                }
+                break;
+
+            case (KeyCode.DownArrow):
+                if (transform.position.y >= THRESHOLDS[(int)Directions.South])
+                {
+
+                    if (!(transform.position.y - safeSpace < THRESHOLDS[(int)Directions.South]))
+                    {
+                        transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime);
+                    }
+                    
+                }
+                else
+                {
+                    transform.position = new Vector3(transform.position.x, THRESHOLDS[(int)Directions.South], transform.position.z);
+                  
+                }
+                break;
+            case (KeyCode.RightArrow):
+
+                if (transform.position.x <= THRESHOLDS[(int)Directions.East])
+                {
+
+                    if (!(transform.position.x + safeSpace > THRESHOLDS[(int)Directions.East]))
+                    {
+                        transform.Translate(new Vector3(Input.GetAxis("Horizontal"),0 , 0) * speed * speedMult * Time.deltaTime); 
+                    }
+                   
+                }
+                else
+                {
+                    transform.position = new Vector3(THRESHOLDS[(int)Directions.East], transform.position.y, transform.position.z);
+                    
+                }
+                break;
+
+            case (KeyCode.LeftArrow):
+
+                if (transform.position.x >= THRESHOLDS[(int)Directions.West])
+                {
+
+                    if (!(transform.position.x - safeSpace < THRESHOLDS[(int)Directions.West]))
+                    {
+                        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0, 0) * speed * speedMult * Time.deltaTime);
+                    }
+                  
+                }
+                else
+                {
+                    transform.position = new Vector3(THRESHOLDS[(int)Directions.West], transform.position.y, transform.position.z);
+                    
+                }
+                break;
+
+        }
+    }
+
+
+
+
+    void BoostPlayerDamage()
+    {
+        //player.damage++
+    }
+    void BoostPlayerSpeed()
+    {
+        //player.Speed++
+    }
+    void BoostPlayerCrit()
+    {
+        //player.crit++
+    }
+>>>>>>> Stashed changes
 }
