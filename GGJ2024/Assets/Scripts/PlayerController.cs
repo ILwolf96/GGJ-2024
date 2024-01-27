@@ -113,10 +113,10 @@ public class PlayerController : ComboAttacker
         {
             Move();
 
-            if (Input.GetKey(KeyCode.Space) && !_isFalling && !_isJumping)
+            if (Input.GetKey(KeyCode.Space) && !isAirborne())
             {
                 originalPosition = Jump();
-                Debug.Log("In Player");
+                
             }
             if (_isJumping)
             {
@@ -128,7 +128,7 @@ public class PlayerController : ComboAttacker
             }
             if (_isFalling)
             {
-                move = gravity; Debug.Log("im falling in love tonighttt");
+                move = gravity;
                 transform.Translate(move * Time.deltaTime);
 
                 if (transform.position.y <= originalPosition.y)
@@ -151,7 +151,6 @@ public class PlayerController : ComboAttacker
         // Invulnerability timing
         if (_isInvunrable)
         {
-            Debug.Log("INVIS");
             _invurnebltyT.Tick();
 
             if (_invurnebltyT.IsOver())
@@ -167,7 +166,6 @@ public class PlayerController : ComboAttacker
         transform.Translate(new Vector3(_pushDirection, 0, 0) * pushVelocity * Time.deltaTime);
         if (Math.Abs(originalPosition.x - transform.position.x) >= pushDistance)
         {
-            Debug.Log("push is over");
             _isPushed = false;
         }
     }
@@ -247,27 +245,29 @@ public class PlayerController : ComboAttacker
     }
     protected override void Attack()
     {
-        if (Input.GetKeyDown(_attackKey))
+       
+        if (Input.GetKeyDown(_attackKey) && !isAirborne())
         {
             base.Attack();
             switch (_comboCounter)
             {
                 case 1:
                     _weapon.Attack(_damage, 0);
-                    Debug.Log("First hit");
                     break;
                 case 2:
                     _weapon.Attack(_damage * comboMultiplier, 0);
-                    Debug.Log("Second hit");
                     break;
                 case 3:
                     _weapon.Attack(_damage * comboMultiplier * comboMultiplier, _knockBack);
-                    Debug.Log("Third hit");
                     break;
                 default:
                     Debug.Log("I fucked up");
                     break;
             }
+        }
+        else if(Input.GetKeyDown(_attackKey))
+        {
+            Debug.Log("Airborne attack");
         }
     }
     public void TakeDamage(float damage, float knockback ,Vector3 enemyPosition)
@@ -278,7 +278,6 @@ public class PlayerController : ComboAttacker
             //Things that happen when not invulnerable
 
             //knockback handling
-            Debug.Log("player got hit" + knockback);
             if (knockback != 0)
             {
                 Knockback(knockback, enemyPosition);
@@ -290,8 +289,7 @@ public class PlayerController : ComboAttacker
         }
     }
     private void Knockback(float knockback, Vector3 enemyPosition) 
-    {
-        Debug.Log("reached knockback");
+    { 
         _isPushed = true;
         _isInvunrable = true;
         originalPosition = transform.position;

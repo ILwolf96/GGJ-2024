@@ -539,9 +539,9 @@ MonoBehaviour:
   _damage: 1
   _knockBack: 5
   attackDuration: 1
-  betweenAttacksInterval: 2
-  comboMultiplier: 3
-  comboWindow: 10
+  betweenAttacksInterval: 1.5
+  comboMultiplier: 1.5
+  comboWindow: 50
   playerTransform: {fileID: 0}
   pushDistance: 3
   pushVelocity: 10
