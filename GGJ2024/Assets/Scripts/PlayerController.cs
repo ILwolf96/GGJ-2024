@@ -36,7 +36,6 @@ public class PlayerController : ComboAttacker
     private bool _isJumping = false;
 
     private Vector3 move;
-    private bool _isFlipped = false;
     private Vector3 groundPos;
     private Vector3 jumpPos;
     private Vector3 gravity = new Vector3(0, -2.5f, 0);
@@ -164,7 +163,7 @@ public class PlayerController : ComboAttacker
 
     public void Pushed()
     {
-        transform.Translate(new Vector3(_pushDirection, 0, 0) * pushVelocity * Time.deltaTime);
+        transform.Translate(new Vector3(_pushDirection, 0, 0) * pushVelocity * Time.deltaTime,Space.World);
         if (Math.Abs(originalPosition.x - transform.position.x) >= pushDistance)
         {
             _isPushed = false;
@@ -309,7 +308,7 @@ public class PlayerController : ComboAttacker
 
                     if (!(transform.position.y + safeSpace > THRESHOLDS[(int)Directions.North]))
                     {
-                        transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime);
+                        transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime, Space.World);
                     }
 
                 }
@@ -326,7 +325,7 @@ public class PlayerController : ComboAttacker
 
                     if (!(transform.position.y - safeSpace < THRESHOLDS[(int)Directions.South]))
                     {
-                        transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime);
+                        transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime, Space.World);
                     }
 
                 }
@@ -337,7 +336,7 @@ public class PlayerController : ComboAttacker
                 }
                 break;
             case (KeyCode.RightArrow):
-                _isFlipped = false;
+                
                 transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
                 if (transform.position.x <= THRESHOLDS[(int)Directions.East])
                 {
@@ -357,7 +356,7 @@ public class PlayerController : ComboAttacker
                 break;
 
             case (KeyCode.LeftArrow):
-                _isFlipped = true;  
+                
                 transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
                 if (transform.position.x >= THRESHOLDS[(int)Directions.West])
                 {
