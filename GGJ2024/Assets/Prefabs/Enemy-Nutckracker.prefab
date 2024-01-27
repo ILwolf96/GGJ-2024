@@ -139,7 +139,7 @@ MonoBehaviour:
   comboMultiplier: 3
   comboWindow: 10
   currentHp: 80
-  movementSpeed: 1
+  movementSpeed: 0.2
   MeterPointToAdd: 10
   Defence: 3
   enemyIsDead: 0

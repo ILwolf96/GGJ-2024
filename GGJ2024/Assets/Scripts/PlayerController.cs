@@ -14,15 +14,7 @@ public class PlayerController : ComboAttacker
     {
         North, South, West, East
     }
-<<<<<<< Updated upstream
-    public static float[] THRESHOLDS = { -0.62f, -3.33f, -8.57f, 8.5f };
-=======
-    public float NorthBorder;
-    public float SouthBorder;
-    public float WestBorder;
-    public float EastBorder;
-    public static float[] THRESHOLDS = { 0, -3.323f, -8.8f, 9.05f };
->>>>>>> Stashed changes
+    public static float[] THRESHOLDS = { -1.08f, -3.323f, -8.8f, 9.05f };
     public static float safeSpace = 0.01f;
 
     [SerializeField] Transform playerTransform;
@@ -42,12 +34,14 @@ public class PlayerController : ComboAttacker
     private float _stunDur;
     private bool _isGrounded = true;
     private bool _isJumping = false;
+    public float MeterPointsToDecrease;
     
     private Vector3 move;
     private Vector3 groundPos;
     private Vector3 jumpPos;
     private Vector3 gravity = new Vector3(0, -2.5f, 0);
     private Vector3 originalPosition;
+    public LaughMeter laughMeter;   
 
 
 
@@ -58,10 +52,6 @@ public class PlayerController : ComboAttacker
 
     protected override void Start()
     {
-        THRESHOLDS[0] = NorthBorder;
-        THRESHOLDS[1] = SouthBorder;
-        THRESHOLDS[2] = EastBorder;
-        THRESHOLDS[3] = WestBorder;
         base.Start();
         _comboSize = 3;
         _invurnebltyT = new MyTimer(invunrabiltyInterval);
@@ -125,10 +115,10 @@ public class PlayerController : ComboAttacker
         {
             Move();
 
-            if (Input.GetKey(KeyCode.Space) && !_isFalling && !_isJumping)
+            if (Input.GetKey(KeyCode.Space) && !isAirborne())
             {
                 originalPosition = Jump();
-                Debug.Log("In Player");
+                
             }
             if (_isJumping)
             {
@@ -140,7 +130,7 @@ public class PlayerController : ComboAttacker
             }
             if (_isFalling)
             {
-                move = gravity; Debug.Log("im falling in love tonighttt");
+                move = gravity;
                 transform.Translate(move * Time.deltaTime);
 
                 if (transform.position.y <= originalPosition.y)
@@ -163,7 +153,6 @@ public class PlayerController : ComboAttacker
         // Invulnerability timing
         if (_isInvunrable)
         {
-            Debug.Log("INVIS");
             _invurnebltyT.Tick();
 
             if (_invurnebltyT.IsOver())
@@ -179,7 +168,6 @@ public class PlayerController : ComboAttacker
         transform.Translate(new Vector3(_pushDirection, 0, 0) * pushVelocity * Time.deltaTime);
         if (Math.Abs(originalPosition.x - transform.position.x) >= pushDistance)
         {
-            Debug.Log("push is over");
             _isPushed = false;
         }
     }
@@ -259,27 +247,29 @@ public class PlayerController : ComboAttacker
     }
     protected override void Attack()
     {
-        if (Input.GetKeyDown(_attackKey))
+       
+        if (Input.GetKeyDown(_attackKey) && !isAirborne())
         {
             base.Attack();
             switch (_comboCounter)
             {
                 case 1:
                     _weapon.Attack(_damage, 0);
-                    Debug.Log("First hit");
                     break;
                 case 2:
                     _weapon.Attack(_damage * comboMultiplier, 0);
-                    Debug.Log("Second hit");
                     break;
                 case 3:
                     _weapon.Attack(_damage * comboMultiplier * comboMultiplier, _knockBack);
-                    Debug.Log("Third hit");
                     break;
                 default:
                     Debug.Log("I fucked up");
                     break;
             }
+        }
+        else if(Input.GetKeyDown(_attackKey))
+        {
+            Debug.Log("Airborne attack");
         }
     }
     public void TakeDamage(float damage, float knockback ,Vector3 enemyPosition)
@@ -290,20 +280,18 @@ public class PlayerController : ComboAttacker
             //Things that happen when not invulnerable
 
             //knockback handling
-            Debug.Log("player got hit" + knockback);
             if (knockback != 0)
             {
                 Knockback(knockback, enemyPosition);
             }
 
-            //laugth meter handling
+            laughMeter.loseLaugh(MeterPointsToDecrease);
 
 
         }
     }
     private void Knockback(float knockback, Vector3 enemyPosition) 
-    {
-        Debug.Log("reached knockback");
+    { 
         _isPushed = true;
         _isInvunrable = true;
         originalPosition = transform.position;
@@ -388,15 +376,15 @@ public class PlayerController : ComboAttacker
 
 
 
-    void BoostPlayerDamage()
+    public void BoostPlayerDamage()
     {
         //player.damage++
     }
-    void BoostPlayerSpeed()
+    public void BoostPlayerSpeed()
     {
         //player.Speed++
     }
-    void BoostPlayerCrit()
+    public void BoostPlayerCrit()
     {
         //player.crit++
     }

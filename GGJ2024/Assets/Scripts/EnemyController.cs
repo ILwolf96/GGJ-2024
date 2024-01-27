@@ -10,12 +10,13 @@ public class EnemyController : ComboAttacker
     private PlayerController _player;
     public float currentHp = 80;
     public float movementSpeed = 0.001f;
-    
+    public float MeterPointToAdd;
+
     public int Defence = 3; // what is this going to be used for?
     public bool enemyIsDead = false;
     public float rotationSpeed = 5f;
     public float attackModeThreshold = 1f;
-    
+    private LaughMeter _laughMeter;
 
     private Vector3 direction;
 
@@ -26,6 +27,8 @@ public class EnemyController : ComboAttacker
         _comboSize = 2;
     }
 
+
+   
 
     // Update is called once per frame
     protected override void Update()
@@ -69,8 +72,10 @@ public class EnemyController : ComboAttacker
          
            
         }
-    }
 
+    }
+   
+ 
     private void AirbornePlayerMovementBehaviour()
     {
         
@@ -98,6 +103,10 @@ public class EnemyController : ComboAttacker
         _player = player;
     }
 
+    public void SetLaughMeter(LaughMeter laughMeter)
+    {
+        _laughMeter = laughMeter;
+    }
     protected override void Attack()
     {
         if (distance <= attackModeThreshold)
@@ -123,11 +132,10 @@ public class EnemyController : ComboAttacker
     }
     public void TakeDamage(float damage, float knockback)
     {
+       
         currentHp -= damage;
-        Debug.Log("Hp was lost");
         if (currentHp <= 0)
         {
-            Debug.Log("I AM DEAD");
             Die();
         }
         else if (knockback != 0)
@@ -137,7 +145,7 @@ public class EnemyController : ComboAttacker
     }
     private void Knockback(float knockback) //need to check if it needs to change 
     {
-      
+        Debug.Log("Enemy Knockback");
         Vector3 newPosition = transform.position;
         float knockDir = (-(_player.transform.position.x - newPosition.x)) / Mathf.Abs(_player.transform.position.x - newPosition.x);
         newPosition.x = transform.position.x + knockback * knockDir;
@@ -147,11 +155,9 @@ public class EnemyController : ComboAttacker
     {
         /*animator.ResetTrigger("Walk1");
         FallAnimation();*/
-
-        //Laugth meter handling
-
-        Destroy(gameObject);
+        _laughMeter.gainLaugh(MeterPointToAdd); //Laugth meter handling
         Spawner.enemyCount--;
+        Destroy(gameObject);
     }
 
 
