@@ -7,6 +7,7 @@ using static PlayerController;
 
 public class EnemyController : ComboAttacker
 {
+    
     public Transform playerTransform;
     public float currentHp = 80;
     public float movementSpeed = 0.001f;
@@ -39,6 +40,7 @@ public class EnemyController : ComboAttacker
                 if (!(transform.position.y + safeSpace > THRESHOLDS[(int)Directions.North]))
                 {
                     transform.Translate(direction * movementSpeed * Time.deltaTime);
+                   
                 }
             }
             else
@@ -51,6 +53,7 @@ public class EnemyController : ComboAttacker
 
             if (yDistance < 0.5)
             {
+            
                 Vector3 newPosition = transform.position;
                 newPosition.y = playerTransform.position.y;
                 transform.position = newPosition;
