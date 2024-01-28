@@ -13,6 +13,7 @@ public class EnemyController : ComboAttacker
     public static float movementSpeed = 0.2f;
     public float MeterPointToAdd;
     public bool enemyIsDead = false;
+    private bool _isPrefabFlipped;
     public float rotationSpeed = 5f;
     public float attackModeThreshold = 1f;
     private LaughMeter _laughMeter;
@@ -24,6 +25,8 @@ public class EnemyController : ComboAttacker
     protected override void Start()
     {
         base.Start();
+        _isPrefabFlipped = transform.rotation.y == 1;
+        Debug.Log(transform.rotation.y);
         _comboSize = 2;
     }
     protected override void Update()
@@ -39,10 +42,10 @@ public class EnemyController : ComboAttacker
 
         if (distance > attackModeThreshold)
         {
-                //animator.SetTrigger("Walk1");
-        if (distance > attackModeThreshold)
-        {
-               
+            //animator.SetTrigger("Walk1");
+            if (distance > attackModeThreshold)
+            {
+
                 direction = _player.transform.position - transform.position;
                 direction.Normalize();
 
@@ -55,41 +58,62 @@ public class EnemyController : ComboAttacker
                         NormalMovingBehaviour();
                     }
                     else
-                    {   
-                    //when above north threshold in the future
+                    {
+                        //when above north threshold in the future
                         EdgeMovmentBehaviour();
                     }
                 }
                 else
                 {
-                //when in bad space
+                    //when in bad space
                     EdgeMovmentBehaviour();
 
                 }
+            }
         }
     }
     private void WhereToLookAt()
     {
-        if(direction.x < 0)
+        if (_isPrefabFlipped)
         {
-            //look left
-            transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
+            if (direction.x < 0)
+            {
 
+                //look left
+                transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+
+            }
+            else
+            {
+                //look right
+                transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
+            }
         }
         else
         {
-            //look right
-            transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+            if (direction.x < 0)
+            {
+
+                //look left
+                transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
+
+            }
+            else
+            {
+                //look right
+                transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+            }
         }
+        
     }
    
     private void NormalMovingBehaviour()
     {
-        transform.Translate(movementSpeed * Time.deltaTime * direction);
+        transform.Translate(movementSpeed * Time.deltaTime * direction,Space.World);
     }
     private void EdgeMovmentBehaviour()
     {
-        transform.Translate(new Vector3(direction.x, -1, 0) * movementSpeed * Time.deltaTime);
+        transform.Translate(new Vector3(direction.x, -1, 0) * movementSpeed * Time.deltaTime,Space.World);
     }
     public void SetPlayer(PlayerController player)
     {

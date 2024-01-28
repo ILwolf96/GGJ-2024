@@ -1331,7 +1331,6 @@ MonoBehaviour:
   jumpHeight: {x: 0, y: 2.5, z: 0}
   invunrabiltyInterval: 1
   MeterPointsToDecrease: 5
-  laughMeter: {fileID: 1922644516}
 --- !u!4 &1515109151
 Transform:
   m_ObjectHideFlags: 0
@@ -1723,7 +1722,7 @@ MonoBehaviour:
   - {fileID: 450033634576709653, guid: eb695b3cca8d87744a8a154d743498b4, type: 3}
   _player: {fileID: 1515109147}
   _laughMeter: {fileID: 1922644516}
-  spawnTime: 7
+  spawnTime: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
