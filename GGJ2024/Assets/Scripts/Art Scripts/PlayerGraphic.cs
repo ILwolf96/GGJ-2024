@@ -13,7 +13,7 @@ public class PlayerGraphic : MonoBehaviour
     {
         if (Movement)
         {
-            StartMovementAnimation();
+            
         }  
     }
     public void StartMovementAnimation()

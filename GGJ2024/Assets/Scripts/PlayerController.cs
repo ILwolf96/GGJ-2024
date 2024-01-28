@@ -9,6 +9,7 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 [RequireComponent(typeof(BoxCollider2D))]
 public class PlayerController : ComboAttacker
 {
+    [SerializeField] Animator animator;
     public enum Directions
     {
         North, South, West, East
@@ -112,6 +113,7 @@ public class PlayerController : ComboAttacker
             }
             if (_isJumping)
             {
+                animator.SetBool("Jumping", true);
                 transform.Translate(jumpHeight * Time.deltaTime);
 
                 if (transform.position.y >= originalPosition.y + jumpHeight.y)
@@ -124,7 +126,7 @@ public class PlayerController : ComboAttacker
                 transform.Translate(move * Time.deltaTime);
 
                 if (transform.position.y <= originalPosition.y)
-                { _isFalling = false; }
+                { _isFalling = false;  animator.SetBool("Jumping", false); }
             }
         }
         else if (_isJumping)
@@ -133,6 +135,7 @@ public class PlayerController : ComboAttacker
 
             if (jumpPos.y == originalPosition.y)
             {
+                animator.SetBool("Jumping", false);
                 _isGrounded = true;
                 _isJumping = false;
             }
@@ -140,6 +143,7 @@ public class PlayerController : ComboAttacker
         // Comabt calculations
         base.Update();
 
+        if (_canAttack) { animator.SetBool("Attacking", false); }
         // Invulnerability timing
         if (_isInvunrable)
         {
@@ -164,6 +168,7 @@ public class PlayerController : ComboAttacker
     {
         if (!_isJumping && !_isFalling)
         {
+            
             //down left
             if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.LeftArrow))
             {
@@ -208,6 +213,7 @@ public class PlayerController : ComboAttacker
             {
                 CheckMovement(KeyCode.RightArrow, 1);
             }
+            else animator.SetBool("Walking", false);
 
         }
         else
@@ -239,6 +245,7 @@ public class PlayerController : ComboAttacker
         if (Input.GetKeyDown(_attackKey) && !isAirborne())
         {
             base.Attack();
+            animator.SetBool("Attacking", true);
             switch (_comboCounter)
             {
                 case 1:
@@ -259,6 +266,7 @@ public class PlayerController : ComboAttacker
         {
             Debug.Log("Airborne attack");
         }
+        
     }
     public void TakeDamage(float damage, float knockback, Vector3 enemyPosition)
     {
@@ -298,7 +306,9 @@ public class PlayerController : ComboAttacker
                     if (!(transform.position.y + safeSpace > THRESHOLDS[(int)Directions.North]))
                     {
                         transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime);
+                        animator.SetBool("Walking", true);
                     }
+                    
 
                 }
                 else
@@ -315,7 +325,9 @@ public class PlayerController : ComboAttacker
                     if (!(transform.position.y - safeSpace < THRESHOLDS[(int)Directions.South]))
                     {
                         transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime);
+                        animator.SetBool("Walking", true);
                     }
+                    
 
                 }
                 else
@@ -325,15 +337,17 @@ public class PlayerController : ComboAttacker
                 }
                 break;
             case (KeyCode.RightArrow):
-                _isFlipped = false;
+                
                 transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
                 if (transform.position.x <= THRESHOLDS[(int)Directions.East])
                 {
 
                     if (!(transform.position.x + safeSpace > THRESHOLDS[(int)Directions.East]))
                     {
-                        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0, 0) * speed * speedMult * Time.deltaTime,Space.World);
+                        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0, 0) * speed * speedMult * Time.deltaTime, Space.World);
+                        animator.SetBool("Walking", true);
                     }
+                    
 
                 }
                 else
@@ -353,6 +367,7 @@ public class PlayerController : ComboAttacker
                     if (!(transform.position.x - safeSpace < THRESHOLDS[(int)Directions.West]))
                     {
                         transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0, 0) * speed * speedMult * Time.deltaTime, Space.World);
+                        animator.SetBool("Walking", true);
                     }
 
                 }

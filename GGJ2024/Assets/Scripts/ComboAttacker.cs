@@ -8,7 +8,7 @@ public abstract class ComboAttacker : MonoBehaviour
     [SerializeField] protected Weapon _weapon;
     public int _damage;
     public int _knockBack;
-    public float attackDuration;
+    public float attackDuration = 0.518f;
     public float betweenAttacksInterval;
     protected bool _canAttack = true;
     public float comboMultiplier;
