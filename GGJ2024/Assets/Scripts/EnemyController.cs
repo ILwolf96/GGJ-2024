@@ -63,6 +63,11 @@ public class EnemyController : ComboAttacker
                 }
             }
             else enemyAnimator.SetBool("Walking", false);
+
+        if (_canAttack)
+        {
+            enemyAnimator.SetBool("Attack", false);
+        }
     }
         private void WhereToLookAt()
         {
