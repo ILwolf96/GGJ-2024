@@ -5,27 +5,29 @@ using UnityEngine.UI;
 
 public class Boss : MonoBehaviour
 {
-    [SerializeField] GameObject _angryBoss;
-    [SerializeField] GameObject _smileBoss;
-    [SerializeField] GameObject _MidTrans;
+
     [SerializeField] Slider _laughMeter;
+    [SerializeField] Animator BossAnimator;
+    [SerializeField] AudioSource BossAudioSource;
+    public bool isSoundPlaying = false;
+
+    
 
     private void Update()
     {
         if (_laughMeter.value < 65)
         {
-            _angryBoss.SetActive(true);
-            _smileBoss.SetActive(false);
-        }
-        else if (_laughMeter.value > 65 && _laughMeter.value < 85)
-        {
-            _angryBoss.SetActive(false);
-            _MidTrans.SetActive(true);
+            BossAnimator.SetBool("Angry", true);
+            if (isSoundPlaying) { BossAudioSource.Pause(); isSoundPlaying = false; }
+            BossAnimator.SetBool("Happy", false);
         }
         else
         {
-            _angryBoss.SetActive(false);
-            _smileBoss.SetActive(true);
+            BossAnimator.SetBool("Angry", false);
+
+            if (!isSoundPlaying) { BossAudioSource.Play(0); isSoundPlaying = true; }
+            
+            BossAnimator.SetBool("Happy", true);
         }
     }
 }

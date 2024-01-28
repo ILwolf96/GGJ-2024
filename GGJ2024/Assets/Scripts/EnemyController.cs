@@ -8,15 +8,17 @@ using static UnityEngine.GraphicsBuffer;
 
 public class EnemyController : ComboAttacker
 {
+    [SerializeField] private Animator enemyAnimator;
     private PlayerController _player;
     public static float currentHp = 50;
-    public static float movementSpeed = 0.2f;
+    public static float movementSpeed = 1.2f;
     public float MeterPointToAdd;
     public bool enemyIsDead = false;
     public float rotationSpeed = 5f;
     public float attackModeThreshold = 1f;
     private LaughMeter _laughMeter;
 
+    private bool _isPrefabFlipped;
     private bool _isLookingLeft = true;
     private Vector3 direction;
 
@@ -25,6 +27,7 @@ public class EnemyController : ComboAttacker
     {
         base.Start();
         _comboSize = 2;
+        _isPrefabFlipped = transform.rotation.y == 1;
     }
     protected override void Update()
     {
@@ -35,14 +38,9 @@ public class EnemyController : ComboAttacker
         direction = _player.transform.position - transform.position;
         direction.Normalize();
 
-        //WhereToLookAt();
-
-        if (distance > attackModeThreshold)
-        {
-            //animator.SetTrigger("Walk1");
+            WhereToLookAt();
             if (distance > attackModeThreshold)
             {
-
                 direction = _player.transform.position - transform.position;
                 direction.Normalize();
 
@@ -62,43 +60,48 @@ public class EnemyController : ComboAttacker
                 else
                 {
                     EdgeMovmentBehaviour();
-
                 }
             }
-        }
+            else enemyAnimator.SetBool("Walking", false);
     }
         private void WhereToLookAt()
         {
-            if (_player.transform.position.x < transform.position.x && !_isLookingLeft)
+        if (_isPrefabFlipped)
+        {
+            if (direction.x < 0)
             {
-                //look left
-                Vector3 thescale = transform.localScale;
-                thescale.x *= -1;
-                transform.localScale = thescale;
-                _isLookingLeft = true;
 
+                //look left
+                transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
 
             }
             else
             {
-                if (_isLookingLeft)
-                {
-                    Vector3 thescale = transform.localScale;
-                    thescale.x *= -1;
-                    transform.localScale = thescale;
-                    _isLookingLeft = false;
-                }
-
+                //look right
+                transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
             }
         }
-        private void AirbornePlayerMovementBehaviour()
+        else
         {
+            if (direction.x < 0)
+            {
 
-            transform.Translate(movementSpeed * Time.deltaTime * direction);
+                //look left
+                transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
+
+            }
+            else
+            {
+                //look right
+                transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+            }
         }
+    }
         private void NormalMovingBehaviour()
         {
-            transform.Translate(movementSpeed * Time.deltaTime * direction);
+        enemyAnimator.SetBool("Attack", false);
+        enemyAnimator.SetBool("Walking", true);
+        transform.Translate(movementSpeed * Time.deltaTime * direction, Space.World);
 
             //The teleport for small distance in the Y axis
             /* if (Mathf.Abs(playerTransform.position.y - transform.position.y) < 0.5)
@@ -108,7 +111,9 @@ public class EnemyController : ComboAttacker
         }
         private void EdgeMovmentBehaviour()
         {
-            transform.Translate(new Vector3(direction.x, -1, 0) * movementSpeed * Time.deltaTime);
+        enemyAnimator.SetBool("Attack", false);
+        enemyAnimator.SetBool("Walking", true);
+        transform.Translate(new Vector3(direction.x, -1, 0) * movementSpeed * Time.deltaTime, Space.World);
         }
         public void SetPlayer(PlayerController player)
         {
@@ -123,13 +128,13 @@ public class EnemyController : ComboAttacker
     {
         if (distance <= attackModeThreshold)
         {
-            /*animator.ResetTrigger("Walk1");
-            AttackAnimation();*/
+            enemyAnimator.SetBool("Attack", true);
             base.Attack();
             switch (_comboCounter)
             {
                 case 1:
                     _weapon.Attack(_damage, 0);
+                    
                     //Debug.Log("First hit");
                     break;
                 case 2:
@@ -141,6 +146,7 @@ public class EnemyController : ComboAttacker
                     break;
             }
         }
+        
     }
     public void TakeDamage(float damage, float knockback)
     {

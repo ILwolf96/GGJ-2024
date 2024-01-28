@@ -4,17 +4,24 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEditor.Experimental.GraphView.GraphView;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class PlayerController : ComboAttacker
 {
     [SerializeField] Animator animator;
+    [SerializeField] LaughMeter laughMeter;
+    [SerializeField] AudioSource PlayerAudioSource;
+    [SerializeField] AudioSource MusicPlayer;
+    [SerializeField] GameObject DeathScreen;
+    [SerializeField] AudioClip DeathMusic;
     public enum Directions
     {
         North, South, West, East
     }
-    public static float[] THRESHOLDS = { -0.62f, -3.33f, -8.57f, 8.5f };
+    public static float[] THRESHOLDS = { -2.1f, -3.58f, -10.05f, 9.974883f };
     public static float safeSpace = 0.01f;
 
     [SerializeField] Transform playerTransform;
@@ -23,6 +30,9 @@ public class PlayerController : ComboAttacker
     public float pushVelocity;
     public float speed = 4;
     public Vector3 jumpHeight = new Vector3(0, 2.5f, 0);
+    public float jumpSpeed;
+    public float fallSpeed;
+
     public float invunrabiltyInterval;
     private KeyCode _attackKey = KeyCode.E;
     private bool _isPushed = false;
@@ -114,7 +124,7 @@ public class PlayerController : ComboAttacker
             if (_isJumping)
             {
                 animator.SetBool("Jumping", true);
-                transform.Translate(jumpHeight * Time.deltaTime);
+                transform.Translate(jumpHeight * Time.deltaTime * jumpSpeed);
 
                 if (transform.position.y >= originalPosition.y + jumpHeight.y)
                 { _isJumping = false; _isFalling = true; }
@@ -123,7 +133,7 @@ public class PlayerController : ComboAttacker
             if (_isFalling)
             {
                 move = gravity;
-                transform.Translate(move * Time.deltaTime);
+                transform.Translate(move * Time.deltaTime * fallSpeed);
 
                 if (transform.position.y <= originalPosition.y)
                 { _isFalling = false;  animator.SetBool("Jumping", false); }
@@ -166,50 +176,49 @@ public class PlayerController : ComboAttacker
     }
     public void Move()
     {
-        if (!_isJumping && !_isFalling)
+        if (!isAirborne())
         {
-            
             //down left
-            if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.LeftArrow))
+            if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.UpArrow) && !Input.GetKey(KeyCode.RightArrow))
             {
                 CheckMovement(KeyCode.DownArrow, 0.8f);
                 CheckMovement(KeyCode.LeftArrow, 0.8f);
             }
             //down right
-            else if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.RightArrow))
+            else if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.RightArrow) && !Input.GetKey(KeyCode.UpArrow) && !Input.GetKey(KeyCode.LeftArrow))
             {
                 CheckMovement(KeyCode.DownArrow, 0.8f);
                 CheckMovement(KeyCode.RightArrow, 0.8f);
             }
             //up right
-            else if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.RightArrow))
+            else if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.RightArrow) && !Input.GetKey(KeyCode.DownArrow) && !Input.GetKey(KeyCode.LeftArrow))
             {
                 CheckMovement(KeyCode.UpArrow, 0.8f);
                 CheckMovement(KeyCode.RightArrow, 0.8f);
             }
             //up left
-            else if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.LeftArrow))
+            else if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.DownArrow) && !Input.GetKey(KeyCode.RightArrow))
             {
                 CheckMovement(KeyCode.UpArrow, 0.8f);
                 CheckMovement(KeyCode.LeftArrow, 0.8f);
             }
-            //Only up
-            else if (Input.GetKey(KeyCode.UpArrow))
-            {
-                CheckMovement(KeyCode.UpArrow, 1);
-            }
             //Only down
-            else if (Input.GetKey(KeyCode.DownArrow))
+            else if (Input.GetKey(KeyCode.DownArrow) && !Input.GetKey(KeyCode.UpArrow))
             {
                 CheckMovement(KeyCode.DownArrow, 1);
             }
+            //Only up
+            else if (Input.GetKey(KeyCode.UpArrow) && !Input.GetKey(KeyCode.DownArrow))
+            {
+                CheckMovement(KeyCode.UpArrow, 1);
+            }
             //Only left
-            else if (Input.GetKey(KeyCode.LeftArrow))
+            else if (Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow))
             {
                 CheckMovement(KeyCode.LeftArrow, 1);
             }
             //Only right
-            else if (Input.GetKey(KeyCode.RightArrow))
+            else if (Input.GetKey(KeyCode.RightArrow) && !Input.GetKey(KeyCode.LeftArrow))
             {
                 CheckMovement(KeyCode.RightArrow, 1);
             }
@@ -219,14 +228,25 @@ public class PlayerController : ComboAttacker
         else
         {
             // only left
-            if (Input.GetKey(KeyCode.LeftArrow))
+            if (Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow))
             {
                 CheckMovement(KeyCode.LeftArrow, 1);
             }
             // only right
-            else if (Input.GetKey(KeyCode.RightArrow))
+            else if (Input.GetKey(KeyCode.RightArrow) && !Input.GetKey(KeyCode.LeftArrow))
             {
                 CheckMovement(KeyCode.RightArrow, 1);
+            }
+            else if (Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.LeftArrow))
+            {
+                if (Input.GetAxis("Horizontal") < 0)
+                {
+                    CheckMovement(KeyCode.LeftArrow, 1);
+                }
+                else
+                {
+                    CheckMovement(KeyCode.RightArrow, 1);
+                }
             }
             move = new Vector3(Input.GetAxis("Horizontal"), 0, 0);
 
@@ -246,6 +266,7 @@ public class PlayerController : ComboAttacker
         {
             base.Attack();
             animator.SetBool("Attacking", true);
+            PlayerAudioSource.Play();
             switch (_comboCounter)
             {
                 case 1:
@@ -282,7 +303,7 @@ public class PlayerController : ComboAttacker
             }
 
             //laugth meter handling
-
+            laughMeter.loseLaugh(MeterPointsToDecrease);
 
         }
     }
@@ -305,7 +326,7 @@ public class PlayerController : ComboAttacker
 
                     if (!(transform.position.y + safeSpace > THRESHOLDS[(int)Directions.North]))
                     {
-                        transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime);
+                        transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime, Space.World);
                         animator.SetBool("Walking", true);
                     }
                     
@@ -324,7 +345,7 @@ public class PlayerController : ComboAttacker
 
                     if (!(transform.position.y - safeSpace < THRESHOLDS[(int)Directions.South]))
                     {
-                        transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime);
+                        transform.Translate(new Vector3(0, Input.GetAxis("Vertical"), 0) * speed * speedMult * Time.deltaTime, Space.World);
                         animator.SetBool("Walking", true);
                     }
                     
@@ -394,5 +415,17 @@ public class PlayerController : ComboAttacker
     {
         comboMultiplier++;
         EnemyController.currentHp += 10;
+    }
+    public void GameEnd()
+    {
+        MusicPlayer.clip = DeathMusic;
+        MusicPlayer.Play();
+        DeathScreen.SetActive(true);
+        //animator.SetBool("Death", true);
+        Time.timeScale = 0;
+    }
+    public void GoToMainMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 }

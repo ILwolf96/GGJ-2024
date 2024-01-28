@@ -33,12 +33,12 @@ public class Spawner : MonoBehaviour
 
             if (_spawnOnLeftSide)
             {
-                randomPos = new Vector3(transform.position.x - 10.6f, transform.position.y - 3f, transform.position.z);
+                randomPos = new Vector3(-11.88f, -3.57f, transform.position.z);
                 enemyController = Instantiate(randomEnemy, randomPos, randomRot).GetComponent<EnemyController>();
             }
             else if (!_spawnOnLeftSide)
             {
-                randomPos = new Vector3(transform.position.x + 10.6f, transform.position.y, transform.position.z);
+                randomPos = new Vector3(11.79f, -3.57f, transform.position.z);
                 enemyController = Instantiate(randomEnemy, randomPos, randomRot).GetComponent<EnemyController>();
             }
             

@@ -4,8 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 public class LaughMeter : MonoBehaviour
 {
+    [SerializeField] PlayerController playerController;
     public Slider slider;
-   
+    private float checkNumber;
+
     
     //public void SetMaxLaugh(int laugh)
     //{
@@ -15,11 +17,13 @@ public class LaughMeter : MonoBehaviour
 
     public void gainLaugh(float laugh)
     {
-        slider.value += laugh;
+    slider.value += laugh;
     }
 
     public void loseLaugh(float laugh)
     {
-        slider.value -= laugh;
+        checkNumber = slider.value - laugh;
+        if (checkNumber <= 0) { slider.value -= laugh; playerController.GameEnd(); }
+        else { slider.value -= laugh; }
     }
 }
